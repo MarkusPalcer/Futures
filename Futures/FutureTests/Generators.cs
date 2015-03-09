@@ -1,13 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive;
-using System.Reactive.Disposables;
-using Futures;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-
-namespace FutureTests
+﻿namespace FutureTests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reactive;
+    using System.Reactive.Disposables;
+
+    using FluentAssertions;
+
+    using Futures;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class Generators
     {
@@ -61,17 +65,120 @@ namespace FutureTests
         }
 
         [TestMethod]
-        public void CreateFuture()
+        public void DoneIsSent()
+        {
+            IFutureObserver<int> observer = new TestObserver<int>();
+
+            var sut = Future.Create<int>(
+                o =>
+                {
+                    observer = o;
+                    return Disposable.Empty;
+                });
+
+            var recorder = new TestObserver<int>();
+            sut.Subscribe(recorder);
+
+            observer.OnDone(1);
+
+            recorder.Events.Should().Equal(Futures.Notification<int>.OnDone(1));
+        }
+
+        [TestMethod]
+        public void ErrorIsSent()
+        {
+            IFutureObserver<int> observer = new TestObserver<int>();
+
+            var ex = new NotImplementedException();
+
+            var sut = Future.Create<int>(
+                o =>
+                {
+                    observer = o;
+                    return Disposable.Empty;
+                });
+
+            var recorder = new TestObserver<int>();
+            sut.Subscribe(recorder);
+
+            observer.OnError(ex);
+
+            recorder.Events.Should().Equal(Futures.Notification<int>.OnError(ex));
+        }
+
+        [TestMethod]
+        public void AfterUnsubscribingNoDoneIsSent()
+        {
+            IFutureObserver<int> observer = new TestObserver<int>();
+
+            var sut = Future.Create<int>(
+                o =>
+                    {
+                        observer = o;
+                        return Disposable.Empty;
+                    });
+
+            var recorder = new TestObserver<int>();
+            var subscription = sut.Subscribe(recorder);
+
+            subscription.Dispose();
+
+            observer.OnDone(1);
+
+            recorder.Events.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void AfterUnsubscribingNoErrorIsSent()
+        {
+            IFutureObserver<int> observer = new TestObserver<int>();
+
+            var sut = Future.Create<int>(
+                o =>
+                {
+                    observer = o;
+                    return Disposable.Empty;
+                });
+
+            var recorder = new TestObserver<int>();
+            var subscription = sut.Subscribe(recorder);
+
+            subscription.Dispose();
+
+            observer.OnError(new NotImplementedException());
+
+            recorder.Events.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void ExceptionsInCreationAreSendNotThrown()
+        {
+            var ex = new NotImplementedException();
+            var sut = Future.Create<int>(
+                o =>
+                    {
+                        throw ex;
+                        return Disposable.Empty;
+                    });
+
+            var recorder = new TestObserver<int>();
+            sut.Subscribe(recorder);
+
+            recorder.Events.Should().Equal(Futures.Notification<int>.OnError(ex));
+        }
+
+        [TestMethod]
+        public void EachSubscriberGetsItsOwnEvents()
         {
             var observers = new List<IFutureObserver<int>>();
             var invokes = 0;
 
             var sut = Future.Create<int>(observer =>
-            {
-                observers.Add(observer);
-                invokes++;
-                return Disposable.Empty;
-            });
+                {
+                    observers.Add(observer);
+                    invokes++;
+                    return Disposable.Empty;
+                });
 
             var observer1 = new TestObserver<int>();
             var observer2 = new TestObserver<int>();
@@ -86,22 +193,28 @@ namespace FutureTests
             // Check if the observers have been added in the correct order
             observers
                 .Select((observer, index) =>
-                {
-                    observer.OnDone(index);
-                    return Unit.Default;
-                })
+                    {
+                        observer.OnDone(index);
+                        return Unit.Default;
+                    })
                 .ToArray();
-                
-            CollectionAssert.AreEqual(new[]{Futures.Notification<int>.OnDone(0)}, observer3.Events.ToArray());
-            CollectionAssert.AreEqual(new[]{Futures.Notification<int>.OnDone(1)}, observer1.Events.ToArray());
-            CollectionAssert.AreEqual(new[]{Futures.Notification<int>.OnDone(2)}, observer2.Events.ToArray());
+
+            CollectionAssert.AreEqual(new[] { Futures.Notification<int>.OnDone(0) }, observer3.Events.ToArray());
+            CollectionAssert.AreEqual(new[] { Futures.Notification<int>.OnDone(1) }, observer1.Events.ToArray());
+            CollectionAssert.AreEqual(new[] { Futures.Notification<int>.OnDone(2) }, observer2.Events.ToArray());
         }
 
         public class TestObserver<T> : IFutureObserver<T>
         {
             private readonly List<Futures.Notification<T>> _events = new List<Futures.Notification<T>>();
 
-            public IReadOnlyList<Futures.Notification<T>> Events { get { return _events; } }
+            public IReadOnlyList<Futures.Notification<T>> Events
+            {
+                get
+                {
+                    return _events;
+                }
+            }
 
             public void OnDone(T result)
             {

@@ -56,7 +56,9 @@ namespace Futures
             return Create<T>(observer => Disposable.Empty);
         }
 
-        public static IDisposable Subscribe<T>(this IFuture<T> future, Action<T> onDone,
+        public static IDisposable Subscribe<T>(
+            this IFuture<T> future,
+            Action<T> onDone,
             Action<Exception> onError = null)
         {
             return future.Subscribe(FutureObserver.Create(onDone, onError ?? (_ => { })));
