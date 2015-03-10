@@ -1,22 +1,24 @@
-﻿using System;
-using System.Reactive.Linq;
-
-namespace Futures
+﻿namespace Futures
 {
+    using System;
+    using System.Reactive.Linq;
+
     public static partial class Future
     {
-        public static IObservable<T> ToObservable<T>(IFuture<T> future)
+        public static IObservable<T> ToObservable<T>(this IFuture<T> future)
         {
             return Observable.Create<T>(observer =>
-            {
-                var futureObserver = FutureObserver.Create<T>(result =>
                 {
-                    observer.OnNext(result);
-                    observer.OnCompleted();
-                }, observer.OnError);
+                    var futureObserver = FutureObserver.Create<T>(
+                        result =>
+                        {
+                            observer.OnNext(result);
+                            observer.OnCompleted();
+                        },
+                observer.OnError);
 
-                return future.Subscribe(futureObserver);
-            });
+                    return future.Subscribe(futureObserver);
+                });
         }
     }
 }
