@@ -1,13 +1,12 @@
-﻿using System;
-using System.Reactive.Disposables;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Futures
+﻿namespace Futures
 {
+    using System;
+    using System.Reactive.Disposables;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     public static partial class Future
     {
-
         public static IFuture<T> FromTask<T>(Task<T> task)
         {
             return new TaskWrapper<T>(task);

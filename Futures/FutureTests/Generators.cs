@@ -203,28 +203,5 @@
             CollectionAssert.AreEqual(new[] { Futures.Notification<int>.OnDone(1) }, observer1.Events.ToArray());
             CollectionAssert.AreEqual(new[] { Futures.Notification<int>.OnDone(2) }, observer2.Events.ToArray());
         }
-
-        public class TestObserver<T> : IFutureObserver<T>
-        {
-            private readonly List<Futures.Notification<T>> _events = new List<Futures.Notification<T>>();
-
-            public IReadOnlyList<Futures.Notification<T>> Events
-            {
-                get
-                {
-                    return _events;
-                }
-            }
-
-            public void OnDone(T result)
-            {
-                _events.Add(Futures.Notification<T>.OnDone(result));
-            }
-
-            public void OnError(Exception exception)
-            {
-                _events.Add(Futures.Notification<T>.OnError(exception));
-            }
-        }
     }
 }
