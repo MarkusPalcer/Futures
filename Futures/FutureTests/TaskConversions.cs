@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Reactive;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using FluentAssertions;
@@ -133,7 +134,6 @@
             var range = Enumerable.Range(0, 3).ToArray();
 
             var observers = range.Select(_ => new TestObserver<int>()).ToArray();
-            
 
             var state = 0;
             Func<Task<int>> factory = () => Task.FromResult(state++);
@@ -150,12 +150,26 @@
                         observer.Events.Should().Equal(expected);
                         return Unit.Default;
                     }).ToArray();
+        }
 
-            foreach (var observer in observers)
-            {
-                sut.Subscribe(observer);
-                observer.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
-            }
+        [TestMethod]
+        public void ConvertingFactoriesWithCancellationCancelsTheTaskWhenUnsubscribing()
+        {
+            var token = CancellationToken.None;
+
+            Func<CancellationToken, Task<int>> factory = t =>
+                {
+                    token = t;
+                    return new TaskCompletionSource<int>().Task;
+                };
+
+            var sut = factory.ToFuture();
+
+            var subscription = sut.Subscribe(new TestObserver<int>());
+            token.IsCancellationRequested.Should().BeFalse();
+
+            subscription.Dispose();
+            token.IsCancellationRequested.Should().BeTrue();
         }
     }
 } 
