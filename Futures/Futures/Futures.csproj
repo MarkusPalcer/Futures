@@ -54,6 +54,7 @@
     <Compile Include="Extensions\Continuation.cs" />
     <Compile Include="Extensions\ObservableConversion.cs" />
     <Compile Include="Extensions\Create.cs" />
+    <Compile Include="Extensions\Various.cs" />
     <Compile Include="IFuture.cs" />
     <Compile Include="IFutureObserver.cs" />
     <Compile Include="Impl\CreatedFuture.cs" />

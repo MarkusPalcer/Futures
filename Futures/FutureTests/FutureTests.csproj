@@ -78,6 +78,7 @@
     <Compile Include="TaskConversions.cs" />
     <Compile Include="TestFuture.cs" />
     <Compile Include="TestObserver.cs" />
+    <Compile Include="Various.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Futures\Futures.csproj">
