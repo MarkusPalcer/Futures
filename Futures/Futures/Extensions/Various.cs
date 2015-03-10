@@ -1,6 +1,7 @@
 ﻿namespace Futures
 {
     using System.Reactive.Disposables;
+    using System.Threading.Tasks;
 
     public static partial class Future
     {
@@ -14,5 +15,13 @@
                     return disp;
                 });
         }
+
+        public static IFuture<T> Cache<T>(this IFuture<T> source)
+        {
+            var tcs = new TaskCompletionSource<T>();
+            source.Subscribe(tcs.SetResult, tcs.SetException);
+
+            return new TaskWrapper<T>(tcs.Task);
+        } 
     }
 }

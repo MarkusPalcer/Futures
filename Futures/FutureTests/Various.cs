@@ -1,12 +1,15 @@
 ﻿namespace FutureTests
 {
     using System;
+    using System.Reactive;
 
     using FluentAssertions;
 
     using Futures;
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Notification = Futures.Notification;
 
     [TestClass]
     public class Various
@@ -38,6 +41,45 @@
                     Notification.OnDone(1),
                     Notification.OnError<int>(ex),
                     Notification.OnError<int>(ex));
+        }
+
+        [TestMethod]
+        public void Caching()
+        {
+            var source = new TestFuture<Unit>();
+            var sut = source.Cache();
+            var recorder = new TestObserver<Unit>();
+
+            sut.Subscribe(recorder);
+            sut.Subscribe(recorder);
+
+            source.Observers.Should().HaveCount(1);
+
+            source.SetResult(Unit.Default);
+
+            recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+
+            recorder.Events.Should().Equal(Notification.OnDone(), Notification.OnDone());
+        }
+
+        [TestMethod]
+        public void CachingErrors()
+        {
+            var source = new TestFuture<Unit>();
+            var sut = source.Cache();
+            var ex = new NotImplementedException();
+            var recorder = new TestObserver<Unit>();
+
+            sut.Subscribe(recorder);
+            sut.Subscribe(recorder);
+
+            source.Observers.Should().HaveCount(1);
+
+            source.SetError(ex);
+
+            recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+
+            recorder.Events.Should().Equal(Notification.OnError<Unit>(ex), Notification.OnError<Unit>(ex));
         }
     }
 }
