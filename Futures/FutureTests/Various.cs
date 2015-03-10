@@ -49,17 +49,20 @@
             var source = new TestFuture<Unit>();
             var sut = source.Cache();
             var recorder = new TestObserver<Unit>();
+            var recorder2 = new TestObserver<Unit>();
 
             sut.Subscribe(recorder);
-            sut.Subscribe(recorder);
+            sut.Subscribe(recorder2);
 
             source.Observers.Should().HaveCount(1);
 
             source.SetResult(Unit.Default);
 
             recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            recorder.Events.Should().Equal(Notification.OnDone());
 
-            recorder.Events.Should().Equal(Notification.OnDone(), Notification.OnDone());
+            recorder2.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            recorder2.Events.Should().Equal(Notification.OnDone());
         }
 
         [TestMethod]
@@ -69,17 +72,20 @@
             var sut = source.Cache();
             var ex = new NotImplementedException();
             var recorder = new TestObserver<Unit>();
+            var recorder2 = new TestObserver<Unit>();
 
             sut.Subscribe(recorder);
-            sut.Subscribe(recorder);
+            sut.Subscribe(recorder2);
 
             source.Observers.Should().HaveCount(1);
 
             source.SetError(ex);
 
             recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            recorder.Events.Should().Equal(Notification.OnError<Unit>(ex));
 
-            recorder.Events.Should().Equal(Notification.OnError<Unit>(ex), Notification.OnError<Unit>(ex));
+            recorder2.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            recorder2.Events.Should().Equal(Notification.OnError<Unit>(ex));
         }
     }
 }

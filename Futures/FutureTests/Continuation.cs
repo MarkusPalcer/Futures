@@ -156,6 +156,42 @@
         }
 
         [TestMethod]
+        public void ContinuingWithFunctionThatIgnoresResultAndCreatesFutures()
+        {
+            var future = new TestFuture<int>();
+            var counter = 0;
+            var sut = future.Then(() => Future.Return(counter++));
+
+            var recorder = new TestObserver<int>();
+
+            // This should create an OnDone(0)
+            sut.Subscribe(recorder);
+            future.SetResult(1);
+
+            // This should create an OnError<NotImplementedException>()
+            sut.Subscribe(recorder);
+            var ex = new NotImplementedException();
+            future.SetError(ex);
+
+            // This should create an OnDone(1)
+            sut.Subscribe(recorder);
+            future.SetResult(1);
+
+            recorder.Events.Should()
+                .Equal(Futures.Notification.OnDone(0), Futures.Notification.OnError<int>(ex), Futures.Notification.OnDone(1));
+            counter.Should().Be(2);
+
+            // This should change nothing
+            sut.Subscribe(recorder).Dispose();
+            future.SetResult(1);
+
+            recorder.Events.Should()
+                .Equal(Futures.Notification.OnDone(0), Futures.Notification.OnError<int>(ex), Futures.Notification.OnDone(1));
+            counter.Should().Be(2);
+        }
+
+
+        [TestMethod]
         public void ContinuingWithAction()
         {
             var future = new TestFuture<int>();

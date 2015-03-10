@@ -1,7 +1,7 @@
 ﻿namespace Futures
 {
-    using System.Reactive;
     using System;
+    using System.Reactive;
     using System.Reactive.Disposables;
 
     public static partial class Future
@@ -57,16 +57,41 @@
             return Create<T>(observer => Disposable.Empty);
         }
 
+        /// <summary>
+        /// Converts the action to an <see cref="IFuture{T}"/> which is executed synchronously every time it is subscribed to
+        /// </summary>
+        /// <param name="source">The action to execute for each subscriber</param>
+        /// <returns>An <see cref="IFuture{T}"/> which executes the action synchronously each time it is subscribed to and yields <see cref="Unit#Default"/> when it is done</returns>
         public static IFuture<Unit> ToFuture(this Action source)
         {
             return Return(Unit.Default).Then(source);
         }
 
+        /// <summary>
+        /// Converts the function to an <see cref="IFuture{T}"/> which is executed synchronously every time it is subscribed to
+        /// </summary>
+        /// <typeparam name="T">
+        /// The result type of the function
+        /// </typeparam>
+        /// <param name="source">
+        /// The function to execute for each subscriber
+        /// </param>
+        /// <returns>
+        /// An <see cref="IFuture{T}"/> which executes the action synchronously each time it is subscribed to and yields its result when it is done
+        /// </returns>
         public static IFuture<T> ToFuture<T>(this Func<T> source)
         {
             return Return(Unit.Default).Then(source);
-        } 
+        }
 
+        /// <summary>
+        /// Subscribes to the specified <see cref="IFuture{T}"/>
+        /// </summary>
+        /// <typeparam name="T">The result type of the <see cref="IFuture{T}"/></typeparam>
+        /// <param name="future">The <see cref="IFuture{T}"/> to subscribe to.</param>
+        /// <param name="onDone">The action to execute when the <see cref="IFuture{T}"/> returns with a result</param>
+        /// <param name="onError">The action to execute when the <see cref="IFuture{T}"/> returns with an error</param>
+        /// <returns>A <see cref="IDisposable"/> which when disposed cancels the subscription</returns>
         public static IDisposable Subscribe<T>(
             this IFuture<T> future,
             Action<T> onDone,
