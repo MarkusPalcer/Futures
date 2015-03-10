@@ -64,5 +64,87 @@
 
             recorder.Events.Should().Equal(Notification<int>.OnError(ex));
         }
+
+        [TestMethod]
+        public void ContinuingWithFunctionsThatCreateFutures()
+        {
+            var outerFuture = new TestFuture<int>();
+            var continuation1 = outerFuture.Then(Future.Return);
+
+            var ex = new NotImplementedException();
+            var continuation2 = outerFuture.Then(_ => Future.Fail<int>(ex));
+
+
+            var continuation3 = outerFuture.Then(
+                x =>
+                    {
+                        throw ex;
+                        return Future.Return(x);
+                    });
+
+            var recorder = new TestObserver<int>();
+
+            outerFuture.Observers.Should().BeEmpty();
+
+            continuation1.Subscribe(recorder);
+            var subscription = continuation1.Subscribe(recorder);
+
+            outerFuture.Observers.Should().HaveCount(2);
+
+            subscription.Dispose();
+            outerFuture.Observers.Should().HaveCount(1);
+
+            // This should produce an OnDone(1)
+            outerFuture.SetResult(1);
+
+            // This should produce an OnError(ex)
+            continuation2.Subscribe(recorder);
+            outerFuture.SetResult(2);
+
+            // This should also produce an OnError(ex)
+            continuation3.Subscribe(recorder);
+            outerFuture.SetResult(3);
+
+            // And this should of course produce the OnErorr(ex)
+            continuation1.Subscribe(recorder);
+            outerFuture.SetError(ex);
+
+            // So we expect OnDone(1) followed by three times OnError(ex)
+            recorder.Events.Should()
+                .Equal(
+                    Notification<int>.OnDone(1),
+                    Notification<int>.OnError(ex),
+                    Notification<int>.OnError(ex),
+                    Notification<int>.OnError(ex));
+        }
+
+        [TestMethod]
+        public void Flattening()
+        {
+            var outerFuture = new TestFuture<IFuture<int>>();
+            var sut = outerFuture.Flatten();
+            var ex = new NotImplementedException();
+
+            var recorder = new TestObserver<int>();
+            
+            // This should produce an OnDone(1)
+            sut.Subscribe(recorder);
+            outerFuture.SetResult(Future.Return(1));
+
+            // This should produce an OnError(ex)
+            sut.Subscribe(recorder);
+            outerFuture.SetResult(Future.Fail<int>(ex));
+
+            // This should also produce an OnError(ex)
+            sut.Subscribe(recorder);
+            outerFuture.SetError(ex);
+
+            // So we expect OnDone(1) followed by two times OnError(ex)
+            recorder.Events.Should()
+                .Equal(
+                    Notification<int>.OnDone(1),
+                    Notification<int>.OnError(ex),
+                    Notification<int>.OnError(ex));            
+        }
     }
 }

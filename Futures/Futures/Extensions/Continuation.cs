@@ -1,6 +1,7 @@
 ﻿namespace Futures
 {
     using System;
+    using System.Reactive.Disposables;
 
     public static partial class Future
     {
@@ -24,6 +25,44 @@
                         observer.OnDone(newValue);
                     },
             observer.OnError));
+        }
+
+        public static IFuture<TOut> Then<TIn, TOut>(this IFuture<TIn> source, Func<TIn, IFuture<TOut>> continuation)
+        {
+            return Create<TOut>(
+                observer =>
+                {
+                    var disp = new MultipleAssignmentDisposable();
+                    disp.Disposable = source.Subscribe(
+                        result =>
+                        {
+                            IFuture<TOut> innerFuture;
+                            try
+                            {
+                                innerFuture = continuation(result);
+                            }
+                            catch (Exception ex)
+                            {
+                                observer.OnError(ex);
+                                return;
+                            }
+
+                            disp.Disposable = innerFuture.Subscribe(observer);
+                        },
+                        observer.OnError);
+                    return disp;
+                });
+        }
+
+        public static IFuture<T> Flatten<T>(this IFuture<IFuture<T>> source)
+        {
+            return Create<T>(
+                observer =>
+                {
+                    var disp = new MultipleAssignmentDisposable();
+                    disp.Disposable = source.Subscribe(innerFuture => disp.Disposable = innerFuture.Subscribe(observer), observer.OnError);
+                    return disp;
+                });
         }
     }
 }
