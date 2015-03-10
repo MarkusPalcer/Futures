@@ -70,6 +70,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Continuation.cs" />
     <Compile Include="Generators.cs" />
     <Compile Include="ObservableConversion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
