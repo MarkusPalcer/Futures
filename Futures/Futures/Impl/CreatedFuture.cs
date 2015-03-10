@@ -16,13 +16,13 @@ namespace Futures
         {
             // Ensure that no further result will be returned when the subscription is cancelled
             // And that the subscription is cancelled once a result is returned.
-                
             var b = new BooleanDisposable();
             var disp = new CompositeDisposable(b);
 
-            var obs = FutureObserver.Create<T>(result =>
-            {
-                if (b.IsDisposed)
+            var obs = FutureObserver.Create<T>(
+                result =>
+                    {
+                        if (b.IsDisposed)
                 {
                     return;
                 }
