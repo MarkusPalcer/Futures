@@ -2,6 +2,25 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reactive;
+
+    public static class Notification
+    {
+        public static Notification<Unit> OnDone()
+        {
+            return Notification<Unit>.OnDone(Unit.Default);
+        } 
+
+        public static Notification<T> OnDone<T>(T value)
+        {
+            return Notification<T>.OnDone(value);
+        }
+
+        public static Notification<T> OnError<T>(Exception ex)
+        {
+            return Notification<T>.OnError(ex);
+        }
+    }
 
     public struct Notification<T>
     {

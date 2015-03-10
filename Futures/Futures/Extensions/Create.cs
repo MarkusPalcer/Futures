@@ -1,8 +1,9 @@
-﻿using System;
-using System.Reactive.Disposables;
-
-namespace Futures
+﻿namespace Futures
 {
+    using System.Reactive;
+    using System;
+    using System.Reactive.Disposables;
+
     public static partial class Future
     {
         /// <summary>
@@ -55,6 +56,16 @@ namespace Futures
         {
             return Create<T>(observer => Disposable.Empty);
         }
+
+        public static IFuture<Unit> ToFuture(this Action source)
+        {
+            return Return(Unit.Default).Then(source);
+        }
+
+        public static IFuture<T> ToFuture<T>(this Func<T> source)
+        {
+            return Return(Unit.Default).Then(source);
+        } 
 
         public static IDisposable Subscribe<T>(
             this IFuture<T> future,

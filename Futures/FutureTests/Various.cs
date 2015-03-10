@@ -35,9 +35,9 @@
             // So we expect OnDone(1) followed by two times OnError(ex)
             recorder.Events.Should()
                 .Equal(
-                    Notification<int>.OnDone(1),
-                    Notification<int>.OnError(ex),
-                    Notification<int>.OnError(ex));
+                    Notification.OnDone(1),
+                    Notification.OnError<int>(ex),
+                    Notification.OnError<int>(ex));
         }
     }
 }

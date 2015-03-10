@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Reactive;
-    using System.Threading;
 
     using FluentAssertions;
 
@@ -37,7 +36,7 @@
             future.SetResult(1);
 
             recorder.Events.Should()
-                .Equal(Futures.Notification<int>.OnDone(0), Futures.Notification<int>.OnError(ex), Futures.Notification<int>.OnDone(1));
+                .Equal(Futures.Notification.OnDone(0), Futures.Notification<int>.OnError(ex), Futures.Notification<int>.OnDone(1));
             counter.Should().Be(2);
 
             // This should change nothing
@@ -45,7 +44,7 @@
             future.SetResult(1);
 
             recorder.Events.Should()
-                .Equal(Futures.Notification<int>.OnDone(0), Futures.Notification<int>.OnError(ex), Futures.Notification<int>.OnDone(1));
+                .Equal(Futures.Notification.OnDone(0), Futures.Notification<int>.OnError(ex), Futures.Notification<int>.OnDone(1));
             counter.Should().Be(2);
         }
 
@@ -65,7 +64,7 @@
             sut.Subscribe(recorder);
             future.SetResult(1);
 
-            recorder.Events.Should().Equal(Futures.Notification<int>.OnError(ex));
+            recorder.Events.Should().Equal(Futures.Notification.OnError<int>(ex));
         }
 
         [TestMethod]
@@ -115,10 +114,10 @@
             // So we expect OnDone(1) followed by three times OnError(ex)
             recorder.Events.Should()
                 .Equal(
-                    Futures.Notification<int>.OnDone(1),
-                    Futures.Notification<int>.OnError(ex),
-                    Futures.Notification<int>.OnError(ex),
-                    Futures.Notification<int>.OnError(ex));
+                    Futures.Notification.OnDone(1),
+                    Futures.Notification.OnError<int>(ex),
+                    Futures.Notification.OnError<int>(ex),
+                    Futures.Notification.OnError<int>(ex));
         }
 
         [TestMethod]
@@ -144,7 +143,7 @@
             future.SetResult(1);
 
             recorder.Events.Should()
-                .Equal(Futures.Notification<int>.OnDone(0), Futures.Notification<int>.OnError(ex), Futures.Notification<int>.OnDone(1));
+                .Equal(Futures.Notification.OnDone(0), Futures.Notification.OnError<int>(ex), Futures.Notification.OnDone(1));
             counter.Should().Be(2);
 
             // This should change nothing
@@ -152,7 +151,7 @@
             future.SetResult(1);
 
             recorder.Events.Should()
-                .Equal(Futures.Notification<int>.OnDone(0), Futures.Notification<int>.OnError(ex), Futures.Notification<int>.OnDone(1));
+                .Equal(Futures.Notification.OnDone(0), Futures.Notification.OnError<int>(ex), Futures.Notification.OnDone(1));
             counter.Should().Be(2);
         }
 
@@ -183,9 +182,9 @@
 
             recorder.Events.Should()
                 .Equal(
-                    Futures.Notification<Unit>.OnDone(Unit.Default),
-                    Futures.Notification<Unit>.OnError(ex),
-                    Futures.Notification<Unit>.OnError(ex));
+                    Futures.Notification.OnDone(),
+                    Futures.Notification.OnError<Unit>(ex),
+                    Futures.Notification.OnError<Unit>(ex));
 
             items.Should().Equal(1);
         }
@@ -218,9 +217,9 @@
 
             recorder.Events.Should()
                 .Equal(
-                    Futures.Notification<Unit>.OnDone(Unit.Default),
-                    Futures.Notification<Unit>.OnError(ex),
-                    Futures.Notification<Unit>.OnError(ex));
+                    Futures.Notification.OnDone(),
+                    Futures.Notification.OnError<Unit>(ex),
+                    Futures.Notification.OnError<Unit>(ex));
 
             counter.Should().Be(1);
         }

@@ -12,6 +12,7 @@
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+    using Notification = Futures.Notification;
     using NotificationKind = Futures.NotificationKind;
 
     [TestClass]
@@ -31,7 +32,7 @@
 
             tcs.SetResult(1);
             recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
-            recorder.Events.Should().Equal(Futures.Notification<int>.OnDone(1));
+            recorder.Events.Should().Equal(Notification.OnDone(1));
         }
 
         [TestMethod]
@@ -49,7 +50,7 @@
 
             tcs.SetException(ex);
             recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
-            recorder.Events.Should().Equal(Futures.Notification<int>.OnError(ex));
+            recorder.Events.Should().Equal(Notification.OnError<int>(ex));
         }
 
         [TestMethod]
@@ -139,7 +140,7 @@
             Func<Task<int>> factory = () => Task.FromResult(state++);
             var sut = factory.ToFuture();
 
-            var expectedEvents = range.Select(Futures.Notification<int>.OnDone).ToArray();
+            var expectedEvents = range.Select(Notification.OnDone).ToArray();
 
             observers.Zip(
                 expectedEvents,

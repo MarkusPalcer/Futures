@@ -4,13 +4,14 @@
     using System.Collections.Generic;
     using System.Reactive;
     using System.Reactive.Linq;
-    using System.Security.Cryptography.X509Certificates;
 
     using FluentAssertions;
 
     using Futures;
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using Notification = System.Reactive.Notification;
 
     [TestClass]
     public class ObservableConversion

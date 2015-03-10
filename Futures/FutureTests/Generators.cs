@@ -24,11 +24,11 @@
 
             sut.Subscribe(tester);
 
-            CollectionAssert.AreEqual(new[] { Futures.Notification<string>.OnDone("123") }, tester.Events.ToArray());
+            CollectionAssert.AreEqual(new[] { Futures.Notification.OnDone("123") }, tester.Events.ToArray());
 
             sut.Subscribe(tester);
 
-            CollectionAssert.AreEqual(new[] { Futures.Notification<string>.OnDone("123"), Futures.Notification<string>.OnDone("123") }, tester.Events.ToArray());
+            CollectionAssert.AreEqual(new[] { Futures.Notification.OnDone("123"), Futures.Notification.OnDone("123") }, tester.Events.ToArray());
         }
 
         [TestMethod]
@@ -81,7 +81,7 @@
 
             observer.OnDone(1);
 
-            recorder.Events.Should().Equal(Futures.Notification<int>.OnDone(1));
+            recorder.Events.Should().Equal(Futures.Notification.OnDone(1));
         }
 
         [TestMethod]
@@ -199,9 +199,44 @@
                     })
                 .ToArray();
 
-            CollectionAssert.AreEqual(new[] { Futures.Notification<int>.OnDone(0) }, observer3.Events.ToArray());
-            CollectionAssert.AreEqual(new[] { Futures.Notification<int>.OnDone(1) }, observer1.Events.ToArray());
-            CollectionAssert.AreEqual(new[] { Futures.Notification<int>.OnDone(2) }, observer2.Events.ToArray());
+            CollectionAssert.AreEqual(new[] { Futures.Notification.OnDone(0) }, observer3.Events.ToArray());
+            CollectionAssert.AreEqual(new[] { Futures.Notification.OnDone(1) }, observer1.Events.ToArray());
+            CollectionAssert.AreEqual(new[] { Futures.Notification.OnDone(2) }, observer2.Events.ToArray());
+        }
+
+        [TestMethod]
+        public void GeneratingFromAction()
+        {
+            var counter = 0;
+            Action source = () => counter++;
+
+            var sut = source.ToFuture();
+
+            counter.Should().Be(0);
+
+            var recorder = new TestObserver<Unit>();
+
+            sut.Subscribe(recorder);
+
+            recorder.Events.Should().Equal(Futures.Notification.OnDone());
+        }
+
+        [TestMethod]
+        public void GeneratingFromFunction()
+        {
+            var counter = 0;
+            Func<int> source = () => counter++;
+
+            var sut = source.ToFuture();
+
+            counter.Should().Be(0);
+
+            var recorder = new TestObserver<int>();
+
+            sut.Subscribe(recorder);
+            sut.Subscribe(recorder);
+
+            recorder.Events.Should().Equal(Futures.Notification.OnDone(0), Futures.Notification.OnDone(1));
         }
     }
 }

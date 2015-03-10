@@ -27,13 +27,13 @@ namespace FutureTests
 
         public void OnDone(T result)
         {
-            this._events.Add(Notification<T>.OnDone(result));
+            this._events.Add(Notification.OnDone(result));
             this.ResetEvent.Set();
         }
 
         public void OnError(Exception exception)
         {
-            this._events.Add(Notification<T>.OnError(exception));
+            this._events.Add(Notification.OnError<T>(exception));
             this.ResetEvent.Set();
         }
     }
