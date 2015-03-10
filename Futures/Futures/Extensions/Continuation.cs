@@ -1,6 +1,7 @@
 ﻿namespace Futures
 {
     using System;
+    using System.Reactive;
     using System.Reactive.Disposables;
 
     public static partial class Future
@@ -53,5 +54,25 @@
                     return disp;
                 });
         }
+
+        public static IFuture<TOut> Then<TIn, TOut>(this IFuture<TIn> source, Func<TOut> continuation)
+        {
+            return source.Then(_ => continuation());
+        }
+
+        public static IFuture<Unit> Then<T>(this IFuture<T> source, Action<T> continuation)
+        {
+            return source.Then(
+                x =>
+                    {
+                        continuation(x);
+                        return Unit.Default;
+                    });
+        }
+
+        public static IFuture<Unit> Then<T>(this IFuture<T> source, Action continuation)
+        {
+            return source.Then(_ => continuation());
+        } 
     }
 }

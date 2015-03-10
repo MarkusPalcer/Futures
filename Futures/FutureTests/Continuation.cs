@@ -1,6 +1,9 @@
 ﻿namespace FutureTests
 {
     using System;
+    using System.Collections.Generic;
+    using System.Reactive;
+    using System.Threading;
 
     using FluentAssertions;
 
@@ -34,7 +37,7 @@
             future.SetResult(1);
 
             recorder.Events.Should()
-                .Equal(Notification<int>.OnDone(0), Notification<int>.OnError(ex), Notification<int>.OnDone(1));
+                .Equal(Futures.Notification<int>.OnDone(0), Futures.Notification<int>.OnError(ex), Futures.Notification<int>.OnDone(1));
             counter.Should().Be(2);
 
             // This should change nothing
@@ -42,7 +45,7 @@
             future.SetResult(1);
 
             recorder.Events.Should()
-                .Equal(Notification<int>.OnDone(0), Notification<int>.OnError(ex), Notification<int>.OnDone(1));
+                .Equal(Futures.Notification<int>.OnDone(0), Futures.Notification<int>.OnError(ex), Futures.Notification<int>.OnDone(1));
             counter.Should().Be(2);
         }
 
@@ -62,14 +65,14 @@
             sut.Subscribe(recorder);
             future.SetResult(1);
 
-            recorder.Events.Should().Equal(Notification<int>.OnError(ex));
+            recorder.Events.Should().Equal(Futures.Notification<int>.OnError(ex));
         }
 
         [TestMethod]
         public void ContinuingWithFunctionsThatCreateFutures()
         {
             var outerFuture = new TestFuture<int>();
-            var continuation1 = outerFuture.Then(Future.Return);
+            var continuation1 = outerFuture.Then(x => Future.Return(x));
 
             var ex = new NotImplementedException();
             var continuation2 = outerFuture.Then(_ => Future.Fail<int>(ex));
@@ -112,10 +115,114 @@
             // So we expect OnDone(1) followed by three times OnError(ex)
             recorder.Events.Should()
                 .Equal(
-                    Notification<int>.OnDone(1),
-                    Notification<int>.OnError(ex),
-                    Notification<int>.OnError(ex),
-                    Notification<int>.OnError(ex));
+                    Futures.Notification<int>.OnDone(1),
+                    Futures.Notification<int>.OnError(ex),
+                    Futures.Notification<int>.OnError(ex),
+                    Futures.Notification<int>.OnError(ex));
+        }
+
+        [TestMethod]
+        public void ContinuingWithFunctionThatIgnoresResult()
+        {
+            var future = new TestFuture<int>();
+            var counter = 0;
+            var sut = future.Then(() => counter++);
+
+            var recorder = new TestObserver<int>();
+
+            // This should create an OnDone(0)
+            sut.Subscribe(recorder);
+            future.SetResult(1);
+
+            // This should create an OnError<NotImplementedException>()
+            sut.Subscribe(recorder);
+            var ex = new NotImplementedException();
+            future.SetError(ex);
+
+            // This should create an OnDone(1)
+            sut.Subscribe(recorder);
+            future.SetResult(1);
+
+            recorder.Events.Should()
+                .Equal(Futures.Notification<int>.OnDone(0), Futures.Notification<int>.OnError(ex), Futures.Notification<int>.OnDone(1));
+            counter.Should().Be(2);
+
+            // This should change nothing
+            sut.Subscribe(recorder).Dispose();
+            future.SetResult(1);
+
+            recorder.Events.Should()
+                .Equal(Futures.Notification<int>.OnDone(0), Futures.Notification<int>.OnError(ex), Futures.Notification<int>.OnDone(1));
+            counter.Should().Be(2);
+        }
+
+        [TestMethod]
+        public void ContinuingWithAction()
+        {
+            var future = new TestFuture<int>();
+            var items = new List<int>();
+            var ex = new NotImplementedException();
+            var recorder = new TestObserver<Unit>();
+
+            Action<int> throwingAction = x => { throw ex; };
+
+            var continuation1 = future.Then(items.Add);
+            var continuation2 = future.Then(throwingAction);
+
+            // This should produce an OnDone(Unit)
+            continuation1.Subscribe(recorder);
+            future.SetResult(1);
+
+            // This should produce an OnError(ex)
+            continuation2.Subscribe(recorder);
+            future.SetResult(2);
+
+            // This should also produce an OnError(ex)
+            continuation1.Subscribe(recorder);
+            future.SetError(ex);
+
+            recorder.Events.Should()
+                .Equal(
+                    Futures.Notification<Unit>.OnDone(Unit.Default),
+                    Futures.Notification<Unit>.OnError(ex),
+                    Futures.Notification<Unit>.OnError(ex));
+
+            items.Should().Equal(1);
+        }
+
+        [TestMethod]
+        public void ContinuingWithActionThatIgnoresResult()
+        {
+            var future = new TestFuture<int>();
+            var counter = 0;
+            var ex = new NotImplementedException();
+            var recorder = new TestObserver<Unit>();
+
+            Action countingAction = () => counter++;
+            Action throwingAction = () => { throw ex; };
+
+            var continuation1 = future.Then(countingAction);
+            var continuation2 = future.Then(throwingAction);
+
+            // This should produce an OnDone(Unit)
+            continuation1.Subscribe(recorder);
+            future.SetResult(1);
+
+            // This should produce an OnError(ex)
+            continuation2.Subscribe(recorder);
+            future.SetResult(2);
+
+            // This should also produce an OnError(ex)
+            continuation1.Subscribe(recorder);
+            future.SetError(ex);
+
+            recorder.Events.Should()
+                .Equal(
+                    Futures.Notification<Unit>.OnDone(Unit.Default),
+                    Futures.Notification<Unit>.OnError(ex),
+                    Futures.Notification<Unit>.OnError(ex));
+
+            counter.Should().Be(1);
         }
     }
 }
