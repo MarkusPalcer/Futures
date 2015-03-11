@@ -81,11 +81,13 @@
     <Compile Include="Subscription.cs" />
     <Compile Include="TaskConversionsWithoutResult.cs" />
     <Compile Include="TaskConversionsWithResult.cs" />
-    <Compile Include="TestFuture.cs" />
-    <Compile Include="TestObserver.cs" />
     <Compile Include="Various.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Futures-Testing\Futures-Testing.csproj">
+      <Project>{a55edc08-ed9e-49e5-b869-33eee2f2afa7}</Project>
+      <Name>Futures-Testing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Futures\Futures.csproj">
       <Project>{02BEAA1C-FCD7-4170-9819-979F2824FCA7}</Project>
       <Name>Futures</Name>

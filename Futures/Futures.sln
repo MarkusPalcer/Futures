@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Futures", "Futures\Futures.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FutureTests", "FutureTests\FutureTests.csproj", "{C81E006F-2A9E-44DA-B7F5-8379CABF542C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Futures-Testing", "Futures-Testing\Futures-Testing.csproj", "{A55EDC08-ED9E-49E5-B869-33EEE2F2AFA7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{C81E006F-2A9E-44DA-B7F5-8379CABF542C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C81E006F-2A9E-44DA-B7F5-8379CABF542C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C81E006F-2A9E-44DA-B7F5-8379CABF542C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A55EDC08-ED9E-49E5-B869-33EEE2F2AFA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A55EDC08-ED9E-49E5-B869-33EEE2F2AFA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A55EDC08-ED9E-49E5-B869-33EEE2F2AFA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A55EDC08-ED9E-49E5-B869-33EEE2F2AFA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
