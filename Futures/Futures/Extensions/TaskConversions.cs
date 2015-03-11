@@ -197,5 +197,30 @@
                 return new CompositeDisposable(disp, subscription);
             });
         }
+
+        /// <summary>
+        /// Converts a <see cref="IFuture{T}"/> to a <see cref="Task{T}"/>
+        /// </summary>
+        /// <typeparam name="T">The result type</typeparam>
+        /// <param name="future">The future to convert</param>
+        /// <param name="cancellationToken">An optional cancellation token which cancels the task and unsubscribes from the <see cref="IFuture{T}"/></param>
+        /// <returns>A task which behaves just as the given <see cref="IFuture{T}"/></returns>
+        public static Task<T> ToTask<T>(this IFuture<T> future, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var tcs = new TaskCompletionSource<T>();
+            var s = future.Subscribe(tcs.SetResult, tcs.SetException);
+
+            if (cancellationToken.CanBeCanceled)
+            {
+                cancellationToken.Register(
+                    () =>
+                        {
+                            s.Dispose();
+                            tcs.TrySetCanceled();
+                        });
+            }
+
+            return tcs.Task;
+        }
     }
 }

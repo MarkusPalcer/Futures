@@ -78,5 +78,31 @@
 
             notifications.Should().Equal(Notification.CreateOnError<int>(exception));
         }
+
+        [TestMethod]
+        public void Unboxing()
+        {
+            var future1 = new TestFuture<int>();
+            var future2 = new TestFuture<int>();
+            var future3 = new TestFuture<int>();
+
+            var obs = new[] { future1, future2, future3 }.ToObservable();
+
+            var messages = new List<System.Reactive.Notification<int>>();
+            var sut = obs.Unbox().Materialize();
+            
+            sut.Subscribe(messages.Add);
+
+            messages.Should().BeEmpty();
+
+            future2.SetResult(2);
+            messages.Should().Equal(Notification.CreateOnNext(2));
+
+            future1.SetResult(1);
+            messages.Should().Equal(Notification.CreateOnNext(2), Notification.CreateOnNext(1));
+
+            future3.SetResult(3);
+            messages.Should().Equal(Notification.CreateOnNext(2), Notification.CreateOnNext(1), Notification.CreateOnNext(3), Notification.CreateOnCompleted<int>());
+        }
     }
 }

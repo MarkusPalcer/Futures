@@ -26,5 +26,16 @@
                     return future.Subscribe(futureObserver);
                 });
         }
+
+        /// <summary>
+        /// Unboxes the value from the futures in the given observable
+        /// </summary>
+        /// <typeparam name="T">The value type</typeparam>
+        /// <param name="source">The observable sequence to unbox the futures from</param>
+        /// <returns>An observable sequence which contains the result of the futures in the order that they return their results</returns>
+        public static IObservable<T> Unbox<T>(this IObservable<IFuture<T>> source)
+        {
+            return source.SelectMany(ToObservable);
+        }
     }
 }

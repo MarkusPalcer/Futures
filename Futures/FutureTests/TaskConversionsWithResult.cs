@@ -172,5 +172,71 @@
             subscription.Dispose();
             token.IsCancellationRequested.Should().BeTrue();
         }
+
+        [TestMethod]
+        public void ConvertingFuturesToTasksYieldsResult()
+        {
+            var future = new TestFuture<int>();
+
+            var t = future.ToTask();
+
+            t.IsCompleted.Should().BeFalse();
+            t.IsFaulted.Should().BeFalse();
+            t.IsCanceled.Should().BeFalse();
+
+            future.SetResult(42);
+
+            t.IsCompleted.Should().BeTrue();
+            t.IsFaulted.Should().BeFalse();
+            t.IsCanceled.Should().BeFalse();
+            t.Result.Should().Be(42);
+            t.Exception.Should().BeNull();
+        }
+
+        [TestMethod]
+        public void ConvertingFuturesToTasksYieldsError()
+        {
+            var future = new TestFuture<int>();
+
+            var t = future.ToTask();
+
+            t.IsCompleted.Should().BeFalse();
+            t.IsFaulted.Should().BeFalse();
+            t.IsCanceled.Should().BeFalse();
+
+            future.SetError(new NotImplementedException());
+
+            t.IsCompleted.Should().BeTrue();
+            t.IsFaulted.Should().BeTrue();
+            t.IsCanceled.Should().BeFalse();
+            t.Exception.Should().NotBeNull();
+            t.Exception.InnerException.Should().BeOfType<NotImplementedException>();
+        }
+
+        [TestMethod]
+        public void ConvertingFuturesToTasksIsCancellable()
+        {
+            var future = new TestFuture<int>();
+
+            future.Observers.Should().BeEmpty();
+
+            var cts = new CancellationTokenSource();
+
+            var t = future.ToTask(cts.Token);
+
+            t.IsCompleted.Should().BeFalse();
+            t.IsFaulted.Should().BeFalse();
+            t.IsCanceled.Should().BeFalse();
+
+            future.Observers.Should().HaveCount(1);
+
+            cts.Cancel();
+
+            t.IsCompleted.Should().BeTrue();
+            t.IsFaulted.Should().BeFalse();
+            t.IsCanceled.Should().BeTrue();
+
+            future.Observers.Should().BeEmpty();
+        }
     }
 } 
