@@ -55,6 +55,7 @@
     <Compile Include="Extensions\ExceptionHandling.cs" />
     <Compile Include="Extensions\ObservableConversion.cs" />
     <Compile Include="Extensions\Create.cs" />
+    <Compile Include="Extensions\Scheduling.cs" />
     <Compile Include="Extensions\Various.cs" />
     <Compile Include="IFuture.cs" />
     <Compile Include="IFutureObserver.cs" />
