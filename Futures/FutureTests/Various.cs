@@ -110,6 +110,8 @@
             var recorder = new TestObserver<Unit>();
             var recorder2 = new TestObserver<Unit>();
 
+            source.Observers.Should().HaveCount(0);
+
             sut.Subscribe(recorder);
             sut.Subscribe(recorder2);
 
@@ -122,6 +124,52 @@
 
             recorder2.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
             recorder2.Events.Should().Equal(Notification.OnError<Unit>(ex));
+        }
+
+        [TestMethod]
+        public void PrefetchingErrors()
+        {
+            var source = new TestFuture<Unit>();
+            var sut = source.Prefetch();
+            var ex = new NotImplementedException();
+            var recorder = new TestObserver<Unit>();
+            var recorder2 = new TestObserver<Unit>();
+
+            source.Observers.Should().HaveCount(1);
+
+            sut.Subscribe(recorder);
+            sut.Subscribe(recorder2);
+
+            source.Observers.Should().HaveCount(1);
+
+            source.SetError(ex);
+
+            recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            recorder.Events.Should().Equal(Notification.OnError<Unit>(ex));
+
+            recorder2.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            recorder2.Events.Should().Equal(Notification.OnError<Unit>(ex));
+        }
+
+        [TestMethod]
+        public void Materializing()
+        {
+            var source = new TestFuture<Unit>();
+            var sut = source.Materialize();
+            var ex = new NotImplementedException();
+
+            var recorder = new TestObserver<Futures.Notification<Unit>>();
+
+            sut.Subscribe(recorder);
+            source.SetResult(Unit.Default);
+
+            sut.Subscribe(recorder);
+            source.SetError(ex);
+
+            recorder.Events.Should()
+                .Equal(
+                    Notification.OnDone(Notification.OnDone(Unit.Default)),
+                    Notification.OnDone(Notification.OnError<Unit>(ex)));
         }
     }
 }

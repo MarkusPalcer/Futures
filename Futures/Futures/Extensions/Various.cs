@@ -71,5 +71,13 @@
 
             return tcs.Task.ToFuture();
         }
+
+        public static IFuture<Notification<T>> Materialize<T>(this IFuture<T> source)
+        {
+            return Create<Notification<T>>(
+                o => source.Subscribe(
+                    r => o.OnDone(Notification.OnDone(r)), 
+                    ex => o.OnDone(Notification.OnError<T>(ex))));
+        } 
     }
 }
