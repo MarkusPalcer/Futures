@@ -62,7 +62,6 @@
     <Compile Include="Impl\CreatedObserver.cs" />
     <Compile Include="Impl\Notification.cs" />
     <Compile Include="Impl\NotificationKind.cs" />
-    <Compile Include="Impl\TaskWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\TaskConversions.cs" />
   </ItemGroup>

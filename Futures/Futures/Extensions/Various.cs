@@ -1,5 +1,6 @@
 ﻿namespace Futures
 {
+    using System.Net.NetworkInformation;
     using System.Reactive.Disposables;
     using System.Threading;
     using System.Threading.Tasks;
@@ -33,7 +34,7 @@
         public static IFuture<T> Cache<T>(this IFuture<T> source)
         {
             var semaphore = new SemaphoreSlim(1);
-            TaskWrapper<T> tw = null;
+            IFuture<T> tw = null;
             return Create<T>(
                 o =>
                     {
@@ -44,7 +45,7 @@
                             {
                                 var tcs = new TaskCompletionSource<T>();
                                 source.Subscribe(tcs.SetResult, tcs.SetException);
-                                tw = new TaskWrapper<T>(tcs.Task);
+                                tw = tcs.Task.ToFuture();
                             }
 
                             return tw.Subscribe(o);
@@ -68,7 +69,7 @@
             var tcs = new TaskCompletionSource<T>();
             source.Subscribe(tcs.SetResult, tcs.SetException);
 
-            return new TaskWrapper<T>(tcs.Task);
+            return tcs.Task.ToFuture();
         }
     }
 }

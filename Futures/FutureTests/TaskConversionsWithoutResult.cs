@@ -16,15 +16,15 @@
     using NotificationKind = Futures.NotificationKind;
 
     [TestClass]
-    public class TaskConversions
+    public class TaskConversionsWithoutResult
     {
         [TestMethod]
         public void SuccessIsPropagated()
         {
             var tcs = new TaskCompletionSource<int>();
-            var sut = tcs.Task.ToFuture();
+            var sut = ((Task)tcs.Task).ToFuture();
 
-            var recorder = new TestObserver<int>();
+            var recorder = new TestObserver<Unit>();
             sut.Subscribe(recorder);
 
             recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeFalse();
@@ -32,17 +32,17 @@
 
             tcs.SetResult(1);
             recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
-            recorder.Events.Should().Equal(Notification.OnDone(1));
+            recorder.Events.Should().Equal(Notification.OnDone());
         }
 
         [TestMethod]
         public void FailureIsPropagated()
         {
             var tcs = new TaskCompletionSource<int>();
-            var sut = tcs.Task.ToFuture();
+            var sut = ((Task)tcs.Task).ToFuture();
             var ex = new NotImplementedException();
 
-            var recorder = new TestObserver<int>();
+            var recorder = new TestObserver<Unit>();
             sut.Subscribe(recorder);
 
             recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeFalse();
@@ -50,16 +50,16 @@
 
             tcs.SetException(ex);
             recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
-            recorder.Events.Should().Equal(Notification.OnError<int>(ex));
+            recorder.Events.Should().Equal(Notification.OnError<Unit>(ex));
         }
 
         [TestMethod]
         public void CancellationIsPropagated()
         {
             var tcs = new TaskCompletionSource<int>();
-            var sut = tcs.Task.ToFuture();
+            var sut = ((Task)tcs.Task).ToFuture();
 
-            var recorder = new TestObserver<int>();
+            var recorder = new TestObserver<Unit>();
             sut.Subscribe(recorder);
 
             recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeFalse();
@@ -76,9 +76,9 @@
         public void NothingIsPropagatedWhenSubscriptionIsCancelledForCancelledTask()
         {
             var tcs = new TaskCompletionSource<int>();
-            var sut = tcs.Task.ToFuture();
+            var sut = ((Task)tcs.Task).ToFuture();
 
-            var recorder = new TestObserver<int>();
+            var recorder = new TestObserver<Unit>();
             var subscription = sut.Subscribe(recorder);
 
             recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeFalse();
@@ -95,9 +95,9 @@
         public void NothingIsPropagatedWhenSubscriptionIsCancelledForFailedTask()
         {
             var tcs = new TaskCompletionSource<int>();
-            var sut = tcs.Task.ToFuture();
+            var sut = ((Task)tcs.Task).ToFuture();
 
-            var recorder = new TestObserver<int>();
+            var recorder = new TestObserver<Unit>();
             var subscription = sut.Subscribe(recorder);
 
             recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeFalse();
@@ -114,9 +114,9 @@
         public void NothingIsPropagatedWhenSubscriptionIsCancelledForSucceededTask()
         {
             var tcs = new TaskCompletionSource<int>();
-            var sut = tcs.Task.ToFuture();
+            var sut = ((Task)tcs.Task).ToFuture();
 
-            var recorder = new TestObserver<int>();
+            var recorder = new TestObserver<Unit>();
             var subscription = sut.Subscribe(recorder);
 
             recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeFalse();
@@ -134,23 +134,23 @@
         {
             var range = Enumerable.Range(0, 3).ToArray();
 
-            var observers = range.Select(_ => new TestObserver<int>()).ToArray();
+            var observers = range.Select(_ => new TestObserver<Unit>()).ToArray();
 
             var state = 0;
-            Func<Task<int>> factory = () => Task.FromResult(state++);
+            Func<Task> factory = () => Task.FromResult(state++);
             var sut = factory.ToFuture();
 
-            var expectedEvents = range.Select(Notification.OnDone).ToArray();
+            var expectedEvents = range.Select(_ => Notification.OnDone()).ToArray();
 
             observers.Zip(
                 expectedEvents,
                 (observer, expected) =>
-                    {
-                        sut.Subscribe(observer);
-                        observer.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
-                        observer.Events.Should().Equal(expected);
-                        return Unit.Default;
-                    }).ToArray();
+                {
+                    sut.Subscribe(observer);
+                    observer.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+                    observer.Events.Should().Equal(expected);
+                    return Unit.Default;
+                }).ToArray();
         }
 
         [TestMethod]
@@ -158,19 +158,20 @@
         {
             var token = CancellationToken.None;
 
-            Func<CancellationToken, Task<int>> factory = t =>
-                {
-                    token = t;
-                    return new TaskCompletionSource<int>().Task;
-                };
+            Func<CancellationToken, Task> factory = t =>
+            {
+                token = t;
+                return new TaskCompletionSource<int>().Task;
+            };
 
             var sut = factory.ToFuture();
 
-            var subscription = sut.Subscribe(new TestObserver<int>());
+            var subscription = sut.Subscribe(new TestObserver<Unit>());
             token.IsCancellationRequested.Should().BeFalse();
 
             subscription.Dispose();
             token.IsCancellationRequested.Should().BeTrue();
         }
+
     }
-} 
+}

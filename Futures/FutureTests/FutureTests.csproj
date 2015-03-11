@@ -79,7 +79,8 @@
     <Compile Include="ObservableConversion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Subscription.cs" />
-    <Compile Include="TaskConversions.cs" />
+    <Compile Include="TaskConversionsWithRerult.cs" />
+    <Compile Include="TaskConversionsWithoutResult.cs" />
     <Compile Include="TestFuture.cs" />
     <Compile Include="TestObserver.cs" />
     <Compile Include="Various.cs" />
