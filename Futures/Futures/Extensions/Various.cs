@@ -1,6 +1,7 @@
 ﻿namespace Futures
 {
     using System.Reactive.Disposables;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public static partial class Future
@@ -28,12 +29,46 @@
         /// <typeparam name="T">The result type</typeparam>
         /// <param name="source">The future to cache.</param>
         /// <returns>An <see cref="IFuture{T}"/> which caches the result of the given <see cref="IFuture{T}"/>, causing all subscribers to this future to share a single subscription</returns>
+        /// <remarks>This method does not subscribe to the underlying <see cref="IFuture{T}"/> until a subscription is made to the resulting <see cref="IFuture{T}"/></remarks>
         public static IFuture<T> Cache<T>(this IFuture<T> source)
+        {
+            var semaphore = new SemaphoreSlim(1);
+            TaskWrapper<T> tw = null;
+            return Create<T>(
+                o =>
+                    {
+                        semaphore.Wait();
+                        try
+                        {
+                            if (tw == null)
+                            {
+                                var tcs = new TaskCompletionSource<T>();
+                                source.Subscribe(tcs.SetResult, tcs.SetException);
+                                tw = new TaskWrapper<T>(tcs.Task);
+                            }
+
+                            return tw.Subscribe(o);
+                        }
+                        finally
+                        {
+                            semaphore.Release();
+                        }
+                    });
+        }
+
+        /// <summary>
+        /// Subscribes immediately to the given future and caches its result.
+        /// </summary>
+        /// <typeparam name="T">The result type</typeparam>
+        /// <param name="source">The future to cache.</param>
+        /// <returns>An <see cref="IFuture{T}"/> which returns the result of the subscription to the given <see cref="IFuture{T}"/> to all subscribers</returns>
+        /// <remarks>This function will subscribe to the underlying <see cref="IFuture{T}"/>, even when no subscription is made to the resulting <see cref="IFuture{T}"/></remarks>
+        public static IFuture<T> Prefetch<T>(this IFuture<T> source)
         {
             var tcs = new TaskCompletionSource<T>();
             source.Subscribe(tcs.SetResult, tcs.SetException);
 
             return new TaskWrapper<T>(tcs.Task);
-        } 
+        }
     }
 }

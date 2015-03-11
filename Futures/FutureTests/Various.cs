@@ -50,6 +50,9 @@
             var sut = source.Cache();
             var recorder = new TestObserver<Unit>();
             var recorder2 = new TestObserver<Unit>();
+            var recorder3 = new TestObserver<Unit>();
+
+            source.Observers.Should().HaveCount(0);
 
             sut.Subscribe(recorder);
             sut.Subscribe(recorder2);
@@ -63,6 +66,39 @@
 
             recorder2.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
             recorder2.Events.Should().Equal(Notification.OnDone());
+
+            sut.Subscribe(recorder3);
+            recorder3.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            recorder3.Events.Should().Equal(Notification.OnDone());
+        }
+
+        [TestMethod]
+        public void Prefetching()
+        {
+            var source = new TestFuture<Unit>();
+            var sut = source.Prefetch();
+            var recorder = new TestObserver<Unit>();
+            var recorder2 = new TestObserver<Unit>();
+            var recorder3 = new TestObserver<Unit>();
+
+            source.Observers.Should().HaveCount(1);
+
+            sut.Subscribe(recorder);
+            sut.Subscribe(recorder2);
+
+            source.Observers.Should().HaveCount(1);
+
+            source.SetResult(Unit.Default);
+
+            recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            recorder.Events.Should().Equal(Notification.OnDone());
+
+            recorder2.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            recorder2.Events.Should().Equal(Notification.OnDone());
+
+            sut.Subscribe(recorder3);
+            recorder3.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            recorder3.Events.Should().Equal(Notification.OnDone());
         }
 
         [TestMethod]
