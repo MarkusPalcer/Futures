@@ -71,6 +71,16 @@
             return tcs.Task.ToFuture();
         }
 
+        /// <summary>
+        /// Materializes the implicit notifications of a future as explicit notification values.
+        /// 
+        /// </summary>
+        /// <typeparam name="T">The type of the result of the future.</typeparam>
+        /// <param name="source">An future to get notification values for.</param>
+        /// <returns>
+        /// An future returning the materialized notification value from the source future.
+        /// </returns>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="source"/> is null.</exception>
         public static IFuture<Notification<T>> Materialize<T>(this IFuture<T> source)
         {
             return Create<Notification<T>>(
