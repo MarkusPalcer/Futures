@@ -19,13 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 	ProjectSection(SolutionItems) = preProject
 		doc\FuturesVsObservables.md = doc\FuturesVsObservables.md
 		doc\FutureVsTask.md = doc\FutureVsTask.md
+		doc\README.md = doc\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tutorial", "Tutorial", "{2DC07396-7E88-4C59-8146-9D7EDC36BADE}"
 	ProjectSection(SolutionItems) = preProject
-		doc\Tutorial\Caching.md = doc\Tutorial\Caching.md
-		doc\Tutorial\Chaining.md = doc\Tutorial\Chaining.md
-		doc\Tutorial\ExceptionHandling.md = doc\Tutorial\ExceptionHandling.md
 		doc\Tutorial\ObtainingFutures.md = doc\Tutorial\ObtainingFutures.md
 		doc\Tutorial\README.md = doc\Tutorial\README.md
 	EndProjectSection

@@ -2,5 +2,8 @@
 
 * [Chapter 1: How do I get a future?](./ObtainingFutures.md)
 * Chapter 2: What to do when the future finishes?
-* Chapter 3: Emergency backup plans
-* Chapter 4: Remembering results
+* Chapter 3: Unleash the power!
+* Chapter 4: Emergency backup plans
+* Chapter 5: Remembering results
+
+[Back to start page](../../)
