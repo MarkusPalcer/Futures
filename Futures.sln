@@ -26,8 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tutorial", "Tutorial", "{2D
 		doc\Tutorial\Caching.md = doc\Tutorial\Caching.md
 		doc\Tutorial\Chaining.md = doc\Tutorial\Chaining.md
 		doc\Tutorial\ExceptionHandling.md = doc\Tutorial\ExceptionHandling.md
-		doc\Tutorial\index.md = doc\Tutorial\index.md
 		doc\Tutorial\ObtainingFutures.md = doc\Tutorial\ObtainingFutures.md
+		doc\Tutorial\README.md = doc\Tutorial\README.md
 	EndProjectSection
 EndProject
 Global
