@@ -5,5 +5,3 @@
 * Chapter 3: Unleash the power!
 * Chapter 4: Emergency backup plans
 * Chapter 5: Remembering results
-
-[Back to start page](../../)
