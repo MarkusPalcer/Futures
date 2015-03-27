@@ -17,3 +17,5 @@ The methods give someone who reads the code the impression that one is operation
 
 With futures you are not writing code which looks like you're querying sequences, but you write code which looks like you are chaining actions together which are usually executed on demand.
 This way you can also wire workflows together if you define them as futures.
+
+[Back](README.md)

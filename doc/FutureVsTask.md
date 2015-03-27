@@ -21,3 +21,5 @@ In many cases it does not make a difference if the future is cached or not, but 
 Thus they are what you should expect to get when you receive a future from a closed source library.
 On the other hand when you program a library, you should try to always hand out uncached futures to the caller and if you don't make a note in the remarks of your MSDoc documentation.
 Of course you can always turn a uncached future into a not yet running cached future with `Cache` and into an already running cached future with `Prefetch`.
+
+[Back](README.md)
