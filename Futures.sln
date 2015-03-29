@@ -26,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tutorial", "Tutorial", "{2D
 	ProjectSection(SolutionItems) = preProject
 		doc\Tutorial\ObtainingFutures.md = doc\Tutorial\ObtainingFutures.md
 		doc\Tutorial\README.md = doc\Tutorial\README.md
+		doc\Tutorial\Subscribing.md = doc\Tutorial\Subscribing.md
 	EndProjectSection
 EndProject
 Global

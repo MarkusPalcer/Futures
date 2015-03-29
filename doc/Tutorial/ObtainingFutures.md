@@ -90,6 +90,9 @@ IFuture<Unit> future = Future.Create(o => {
 });
 ```
 
-* Next chapter
+Once you've obtained a future, you'll be able to react to its notifications.
+In the next chapter we will talk about how to do that.
+
+* [Next chapter](Subscribing.md)
 * [Back to table of contents](README.md) 
 * [Back to documentation root](../README.md)
