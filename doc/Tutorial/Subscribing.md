@@ -30,6 +30,6 @@ This conversion can take a `CancellationToken`, which will cause the subscriptio
 Usually you don't want to just subscribe to a future, so in the next chapter we'll talk about how we can do some operations on futures.
 
 * [Previous Chapter](ObtainingFutures.md)
-* Next Chapter
+* [Next Chapter](Transformations.md)
 * [Back to table of contents](README.md) 
 * [Back to documentation root](../README.md)
