@@ -79,10 +79,10 @@
 
             var continuation3 = outerFuture.Then(
                 x =>
-                    {
-                        throw ex;
-                        return Future.Return(x);
-                    });
+                {
+                    throw ex;
+                    return Future.Return(x);
+                });
 
             var recorder = new TestObserver<int>();
 
@@ -190,7 +190,6 @@
             counter.Should().Be(2);
         }
 
-
         [TestMethod]
         public void ContinuingWithAction()
         {
@@ -258,6 +257,83 @@
                     Futures.Notification.OnError<Unit>(ex));
 
             counter.Should().Be(1);
+        }
+
+        [TestMethod]
+        public void ContinuingFactoryFunctions()
+        {
+            Func<int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, IFuture<int>> f =
+                (i, i1, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16) =>
+                Future.Return(1);
+
+            var newFactory = f.Then(i => i + 1);
+
+            var instance = newFactory(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+
+            var recorder = new TestObserver<int>();
+            instance.Subscribe(recorder);
+
+            recorder.Events.Should().Equal(Futures.Notification.OnDone(2));
+        }
+
+        [TestMethod]
+        public void ContinuingFailingFactoryFunctions()
+        {
+            var ex = new InvalidOperationException();
+            Func<int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, IFuture<int>> f =
+               (i, i1, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16) =>
+               Future.Fail<int>(ex);
+
+            var newFactory = f.Then(i => i + 1);
+
+            var instance = newFactory(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+
+            var recorder = new TestObserver<int>();
+            instance.Subscribe(recorder);
+
+            recorder.Events.Should().Equal(Futures.Notification.OnError<int>(ex));
+        }
+
+        [TestMethod]
+        public void ContinuingFactoryFunctionsWithFailure()
+        {
+            var ex = new InvalidOperationException();
+            Func<int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, IFuture<int>> f =
+                (i, i1, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16) =>
+                Future.Return(1);
+
+            var newFactory = f.Then(i =>
+            {
+                throw ex;
+                return i;
+            });
+
+            var instance = newFactory(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+
+            var recorder = new TestObserver<int>();
+            instance.Subscribe(recorder);
+
+            recorder.Events.Should().Equal(Futures.Notification.OnError<int>(ex));
+        }
+
+        [TestMethod]
+        public void ContinuingThrowingFactoryFunctions()
+        {
+            var ex = new InvalidOperationException();
+            Func<int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, IFuture<int>> f =
+                (i, i1, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16) =>
+                {
+                    throw ex;
+                };
+
+            var newFactory = f.Then(i => i + 1);
+
+            var instance = newFactory(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+
+            var recorder = new TestObserver<int>();
+            instance.Subscribe(recorder);
+
+            recorder.Events.Should().Equal(Futures.Notification.OnError<int>(ex));
         }
     }
 }
