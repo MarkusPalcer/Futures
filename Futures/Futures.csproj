@@ -57,6 +57,8 @@
     <Compile Include="Extensions\Create.cs" />
     <Compile Include="Extensions\Scheduling.cs" />
     <Compile Include="Extensions\Various.cs" />
+    <Compile Include="FactoryExtensions\Continuation.cs" />
+    <Compile Include="FactoryExtensions\Wrapping.cs" />
     <Compile Include="IFuture.cs" />
     <Compile Include="IFutureObserver.cs" />
     <Compile Include="Impl\CreatedFuture.cs" />
@@ -69,7 +71,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
