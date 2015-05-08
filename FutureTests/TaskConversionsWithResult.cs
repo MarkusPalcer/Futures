@@ -238,5 +238,63 @@
 
             future.Observers.Should().BeEmpty();
         }
+
+        [TestMethod]
+        public async Task ConvertingFuturesToTaskFactories()
+        {
+            var counter = 0;
+            var future = Future.Return(Unit.Default).Then(_ => counter++);
+            var sut = future.ToTaskFactory();
+
+            var results = await Task.WhenAll(sut(), sut(), sut());
+
+            results.Should().Equal(0, 1, 2);
+        }
+
+        [TestMethod]
+        public void ConvertingFuturesToTaskFactoriesIsCancellable()
+        {
+            var future = new TestFuture<int>();
+
+            future.Observers.Should().BeEmpty();
+
+            var cts = new CancellationTokenSource();
+
+            var tf = future.ToCancellableTaskFactory();
+
+            var t = tf(cts.Token);
+            var t2 = tf(CancellationToken.None);
+
+            t.IsCompleted.Should().BeFalse();
+            t.IsFaulted.Should().BeFalse();
+            t.IsCanceled.Should().BeFalse();
+
+
+            t2.IsCompleted.Should().BeFalse();
+            t2.IsFaulted.Should().BeFalse();
+            t2.IsCanceled.Should().BeFalse();
+
+            future.Observers.Should().HaveCount(2);
+
+            cts.Cancel();
+
+            t.IsCompleted.Should().BeTrue();
+            t.IsFaulted.Should().BeFalse();
+            t.IsCanceled.Should().BeTrue();
+
+            t2.IsCompleted.Should().BeFalse();
+            t2.IsFaulted.Should().BeFalse();
+            t2.IsCanceled.Should().BeFalse();
+
+            future.Observers.Should().HaveCount(1);
+
+            future.SetResult(42);
+
+            t2.IsCompleted.Should().BeTrue();
+            t2.IsFaulted.Should().BeFalse();
+            t2.IsCanceled.Should().BeFalse();
+            t2.Result.Should().Be(42);
+            t2.Exception.Should().BeNull();
+        }
     }
 } 

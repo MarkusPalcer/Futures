@@ -222,5 +222,28 @@
 
             return tcs.Task;
         }
+
+        /// <summary>
+        /// Converts a <see cref="IFuture{T}"/> to a Function which starts the future and returns a new <see cref="Task{T}"/> each time it is called.
+        /// </summary>
+        /// <typeparam name="T">The result type</typeparam>
+        /// <param name="future">The future to convert</param>
+        /// <returns>A task which behaves just as the given <see cref="IFuture{T}"/></returns>
+        public static Func<Task<T>> ToTaskFactory<T>(this IFuture<T> future)
+        {
+            return () => future.ToTask();
+        }
+
+        /// <summary>
+        /// Converts a <see cref="IFuture{T}"/> to a Function which takes a cancellation token and starts the future and returns a new <see cref="Task{T}"/> each time it is called.
+        /// The cancellation token cancels the returned task.
+        /// </summary>
+        /// <typeparam name="T">The result type</typeparam>
+        /// <param name="future">The future to convert</param>
+        /// <returns>A task which behaves just as the given <see cref="IFuture{T}"/></returns>
+        public static Func<CancellationToken, Task<T>> ToCancellableTaskFactory<T>(this IFuture<T> future)
+        {
+            return cancellationToken => future.ToTask(cancellationToken);
+        }
     }
 }
