@@ -130,6 +130,97 @@
         }
 
         /// <summary>
+        /// Recovers from all errors
+        /// </summary>
+        /// <typeparam name="T">The result type</typeparam>
+        /// <param name="source">The <see cref="IFuture{T}"/> which is watched for errors</param>
+        /// <param name="handler">A function which tries to recover from the exception, returning a valid value once done so</param>
+        /// <returns>A <see cref="IFuture{T}"/> which only calls <see cref="IFutureObserver{T}#OnError"/> when recovery fails or the exception is not assignable to the given type</returns>
+        /// <remarks>If the handler throws an exception, the resulting future will report it to subscribers</remarks>
+        public static IFuture<T> Recover<T>(this IFuture<T> source, Func<Exception, T> handler)
+        {
+            return Recover<T, Exception>(source, handler);
+        }
+
+        /// <summary>
+        /// Recovers from all errors
+        /// </summary>
+        /// <typeparam name="T">The result type</typeparam>
+        /// <param name="source">The <see cref="IFuture{T}"/> which is watched for errors</param>
+        /// <param name="handler">A function which tries to recover from the exception, returning a valid value once done so</param>
+        /// <returns>A <see cref="IFuture{T}"/> which only calls <see cref="IFutureObserver{T}#OnError"/> when recovery fails or the exception is not assignable to the given type</returns>
+        /// <remarks>If the handler throws an exception, the resulting future will report it to subscribers</remarks>
+        public static IFuture<T> Recover<T>(this IFuture<T> source, Func<T> handler) 
+        {
+            return source.Recover<T, Exception>(_ => handler());
+        }
+
+        /// <summary>
+        /// Recovers from all errors
+        /// </summary>
+        /// <typeparam name="T">The result type</typeparam>
+        /// <param name="source">The <see cref="IFuture{T}"/> which is watched for errors</param>
+        /// <param name="handler">A function which tries to recover from the exception, returning an <see cref="IFuture{T}"/> which will yield the recovery value</param>
+        /// <returns>A <see cref="IFuture{T}"/> which only calls <see cref="IFutureObserver{T}#OnError"/> when recovery fails or the exception is not assignable to the given type</returns>
+        /// <remarks>If the handler throws or the new <see cref="IFuture{T}"/> returns with an exception, the resulting future will report it to subscribers</remarks>
+        public static IFuture<T> Recover<T>(this IFuture<T> source, Func<Exception, IFuture<T>> handler)
+        {
+            return Create<T>(
+                o =>
+                {
+                    var disp = new MultipleAssignmentDisposable();
+                    Action<Exception> handle = ex =>
+                    {
+                        if (ex != null)
+                        {
+                            try
+                            {
+                                disp.Disposable = handler(ex).Subscribe(o);
+                            }
+                            catch (Exception ex2)
+                            {
+                                o.OnError(ex2);
+                            }
+                        }
+                        else
+                        {
+                            o.OnError(ex);
+                        }
+                    };
+
+                    disp.Disposable = source.Subscribe(o.OnDone, handle);
+                    return disp;
+                });
+        }
+
+        /// <summary>
+        /// Recovers from errors
+        /// </summary>
+        /// <typeparam name="T">The result type</typeparam>
+        /// <param name="source">The <see cref="IFuture{T}"/> which is watched for errors</param>
+        /// <param name="handler">A function which tries to recover from the exception, returning an <see cref="IFuture{T}"/> which will yield the recovery value</param>
+        /// <returns>A <see cref="IFuture{T}"/> which only calls <see cref="IFutureObserver{T}#OnError"/> when recovery fails or the exception is not assignable to the given type</returns>
+        /// <remarks>If the handler throws or the new <see cref="IFuture{T}"/> returns with an exception, the resulting future will report it to subscribers</remarks>
+        public static IFuture<T> Recover<T>(this IFuture<T> source, Func<IFuture<T>> handler)
+        {
+            return source.Recover<T, Exception>(_ => handler());
+        }
+
+        /// <summary>
+        /// Recovers from all errors
+        /// </summary>
+        /// <typeparam name="T">The result type</typeparam>
+        /// <param name="source">The <see cref="IFuture{T}"/> which is watched for errors</param>
+        /// <param name="recovery">A <see cref="IFuture{T}"/> which is used to recover from the error</param>
+        /// <returns>A <see cref="IFuture{T}"/> which only calls <see cref="IFutureObserver{T}#OnError"/> when recovery fails or the exception is not assignable to the given type</returns>
+        /// <remarks>If the handler throws or the new <see cref="IFuture{T}"/> returns with an exception, the resulting future will report it to subscribers</remarks>
+        public static IFuture<T> Recover<T>(this IFuture<T> source, IFuture<T> recovery)
+        {
+            return source.Recover<T, Exception>(() => recovery);
+        }
+
+
+        /// <summary>
         /// Retries the operation by subscribing to the specified <see cref="IFuture{T}"/> again after varying delays
         /// </summary>
         /// <typeparam name="T">The result type</typeparam>

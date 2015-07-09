@@ -166,6 +166,71 @@
         }
 
         [TestMethod]
+        public void RecoveringFromAllExceptions()
+        {
+            var future = new TestFuture<Unit>();
+            var recorder = new TestObserver<Unit>();
+            var sut = future.Recover(_ => Unit.Default);
+
+            sut.Subscribe(recorder);
+            future.SetError(new InvalidOperationException());
+
+            recorder.Events.Should().Equal(Notification.OnDone());
+        }
+
+        [TestMethod]
+        public void RecoveringFromAllExceptionsWithoutCaringForTheException()
+        {
+            var future = new TestFuture<Unit>();
+            var recorder = new TestObserver<Unit>();
+            var sut = future.Recover(() => Unit.Default);
+
+            sut.Subscribe(recorder);
+            future.SetError(new InvalidOperationException());
+
+            recorder.Events.Should().Equal(Notification.OnDone());
+        }
+
+        [TestMethod]
+        public void RecoveringFromAllExceptionsWithFutureFactory()
+        {
+            var future = new TestFuture<Unit>();
+            var recorder = new TestObserver<Unit>();
+            var sut = future.Recover(_ => Future.Return(Unit.Default));
+
+            sut.Subscribe(recorder);
+            future.SetError(new InvalidOperationException());
+
+            recorder.Events.Should().Equal(Notification.OnDone());
+        }
+
+        [TestMethod]
+        public void RecoveringFromAllExceptionsWithFutureFactoryIgnoringTheException()
+        {
+            var future = new TestFuture<Unit>();
+            var recorder = new TestObserver<Unit>();
+            var sut = future.Recover(() => Future.Return(Unit.Default));
+
+            sut.Subscribe(recorder);
+            future.SetError(new InvalidOperationException());
+
+            recorder.Events.Should().Equal(Notification.OnDone());
+        }
+
+        [TestMethod]
+        public void RecoveringFromAllExceptionsWithGivenFuture()
+        {
+            var future = new TestFuture<Unit>();
+            var recorder = new TestObserver<Unit>();
+            var sut = future.Recover(Future.Return(Unit.Default));
+
+            sut.Subscribe(recorder);
+            future.SetError(new InvalidOperationException());
+
+            recorder.Events.Should().Equal(Notification.OnDone());
+        }
+
+        [TestMethod]
         public void RetryingWithVariableDelay()
         {
             var delays = new[]
