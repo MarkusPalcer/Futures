@@ -238,5 +238,22 @@
 
             recorder.Events.Should().Equal(Futures.Notification.OnDone(0), Futures.Notification.OnDone(1));
         }
+
+        [TestMethod]
+        public void GeneratingFromLazy()
+        {
+            var counter = 0;
+            var src = new Lazy<int>(() => counter++);
+
+            var sut = src.ToFuture();
+
+            var recorder = new TestObserver<int>();
+
+            sut.Subscribe(recorder);
+            sut.Subscribe(recorder);
+
+            recorder.Events.Should().Equal(Futures.Notification.OnDone(0), Futures.Notification.OnDone(0));
+            counter.Should().Be(1);
+        }
     }
 }

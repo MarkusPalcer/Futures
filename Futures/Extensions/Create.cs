@@ -85,6 +85,38 @@
         }
 
         /// <summary>
+        /// Converts the instance of <see cref="Lazy{T}"/> to an <see cref="IFuture{T}"/>.
+        /// </summary>
+        /// <typeparam name="T">
+        /// The result type of the function
+        /// </typeparam>
+        /// <param name="source">
+        /// The lazy data source
+        /// </param>
+        /// <returns>
+        /// An <see cref="IFuture{T}"/> which evaluates the Value property of the lazy source
+        /// </returns>
+        /// <remarks>
+        /// The function that creates the value is only executed once no matter how many subscribers are added.
+        /// </remarks>
+        public static IFuture<T> ToFuture<T>(this Lazy<T> source)
+        {
+            return Future.Create<T>(o =>
+            {
+                try
+                {
+                    o.OnDone(source.Value);
+                }
+                catch (Exception ex)
+                {
+                    o.OnError(ex);
+                }
+
+                return Disposable.Empty;
+            });
+        }
+
+        /// <summary>
         /// Subscribes to the specified <see cref="IFuture{T}"/>
         /// </summary>
         /// <typeparam name="T">The result type of the <see cref="IFuture{T}"/></typeparam>
