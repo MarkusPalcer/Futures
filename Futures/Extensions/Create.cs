@@ -101,7 +101,7 @@
         /// </remarks>
         public static IFuture<T> ToFuture<T>(this Lazy<T> source)
         {
-            return Future.Create<T>(o =>
+            return Create<T>(o =>
             {
                 try
                 {
@@ -133,7 +133,7 @@
         } 
     }
 
-    public static partial class FutureObserver
+    public static class FutureObserver
     {
         /// <summary>
         /// Creates a new <see cref="IFutureObserver{T}"/>

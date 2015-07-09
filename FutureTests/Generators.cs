@@ -158,7 +158,6 @@
                 o =>
                     {
                         throw ex;
-                        return Disposable.Empty;
                     });
 
             var recorder = new TestObserver<int>();
@@ -197,6 +196,7 @@
                         observer.OnDone(index);
                         return Unit.Default;
                     })
+            // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
                 .ToArray();
 
             CollectionAssert.AreEqual(new[] { Futures.Notification.OnDone(0) }, observer3.Events.ToArray());

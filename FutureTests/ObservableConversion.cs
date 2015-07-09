@@ -1,4 +1,7 @@
-﻿namespace FutureTests
+﻿using System.Reactive.Concurrency;
+using Microsoft.Reactive.Testing;
+
+namespace FutureTests
 {
     using System;
     using System.Collections.Generic;
@@ -103,6 +106,131 @@
 
             future3.SetResult(3);
             messages.Should().Equal(Notification.CreateOnNext(2), Notification.CreateOnNext(1), Notification.CreateOnNext(3), Notification.CreateOnCompleted<int>());
+        }
+
+        [TestMethod]
+        public void RepeatWithDelayFunction()
+        {
+            var receivedInts = new List<int>();
+            var scheduler = new TestScheduler();
+            var counter = 0;
+            var source = Future.Create<int>(
+                o =>
+                {
+                    counter++;
+                    return scheduler.Schedule(TimeSpan.FromMilliseconds(counter*100), () => o.OnDone(counter));
+                });
+
+            var sut = source.Repeat(scheduler, x => TimeSpan.FromMilliseconds(x*100));
+
+            counter.Should().Be(0);
+
+            var subscription = sut.Subscribe(receivedInts.Add);
+
+            scheduler.AdvanceBy(1);
+
+            counter.Should().Be(1);
+            receivedInts.Should().BeEmpty();
+
+            scheduler.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
+
+            receivedInts.Should().BeEquivalentTo(1);
+            counter.Should().Be(1);
+
+            scheduler.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
+
+            counter.Should().Be(2);
+            receivedInts.Should().BeEquivalentTo(1);
+
+            scheduler.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
+
+            counter.Should().Be(2);
+            receivedInts.Should().BeEquivalentTo(1);
+
+            scheduler.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
+
+            counter.Should().Be(2);
+            receivedInts.Should().BeEquivalentTo(1, 2);
+
+            scheduler.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
+
+            counter.Should().Be(2);
+            receivedInts.Should().BeEquivalentTo(1, 2);
+
+            scheduler.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
+
+            counter.Should().Be(3);
+            receivedInts.Should().BeEquivalentTo(1, 2);
+
+            // And so on
+
+            subscription.Dispose();
+
+            scheduler.Start();
+
+            // No change after disposing
+            counter.Should().Be(3);
+            receivedInts.Should().BeEquivalentTo(1, 2);
+        }
+
+        [TestMethod]
+        public void RepeatWithConstandDelay()
+        {
+            var receivedInts = new List<int>();
+            var scheduler = new TestScheduler();
+            var counter = 0;
+            var source = Future.Create<int>(
+                o =>
+                {
+                    counter++;
+                    return scheduler.Schedule(TimeSpan.FromMilliseconds(counter * 100), () => o.OnDone(counter));
+                });
+
+            var sut = source.Repeat(scheduler, TimeSpan.FromMilliseconds(100));
+
+            counter.Should().Be(0);
+
+            var subscription = sut.Subscribe(receivedInts.Add);
+
+            scheduler.AdvanceBy(1);
+
+            counter.Should().Be(1);
+            receivedInts.Should().BeEmpty();
+
+            scheduler.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
+
+            receivedInts.Should().BeEquivalentTo(1);
+            counter.Should().Be(1);
+
+            scheduler.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
+
+            counter.Should().Be(2);
+            receivedInts.Should().BeEquivalentTo(1);
+
+            scheduler.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
+
+            counter.Should().Be(2);
+            receivedInts.Should().BeEquivalentTo(1);
+
+            scheduler.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
+
+            counter.Should().Be(2);
+            receivedInts.Should().BeEquivalentTo(1, 2);
+
+            scheduler.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
+
+            counter.Should().Be(3);
+            receivedInts.Should().BeEquivalentTo(1, 2);
+
+            // And so on
+
+            subscription.Dispose();
+
+            scheduler.Start();
+
+            // No change after disposing
+            counter.Should().Be(3);
+            receivedInts.Should().BeEquivalentTo(1, 2);
         }
     }
 }
