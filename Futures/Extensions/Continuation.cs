@@ -3,8 +3,6 @@
     using System;
     using System.Reactive;
     using System.Reactive.Disposables;
-    using System.Runtime.CompilerServices;
-    using System.Security.Permissions;
 
     public static partial class Future
     {
@@ -128,6 +126,37 @@
         public static IFuture<Unit> Then<T>(this IFuture<T> source, Action continuation)
         {
             return source.Then(_ => continuation());
+        }
+
+        /// <summary>
+        /// Continues the operation by transforming the result of the <see cref="IFuture{T}"/>
+        /// </summary>
+        /// <typeparam name="TIn">The result type of the transformed <see cref="IFuture{T}"/></typeparam>
+        /// <typeparam name="TOut">The result type of the transformation</typeparam>
+        /// <param name="source">The <see cref="IFuture{T}"/> to operate on</param>
+        /// <param name="continuation">The transformation to execute</param>
+        /// <returns>A <see cref="IFuture{T}"/> which returns the transformed result</returns>
+        /// <remarks>The result is automatically unboxed from the generated <see cref="Lazy{T}"/> instance</remarks>
+        public static IFuture<TOut> Then<TIn, TOut>(this IFuture<TIn> source, Func<TIn, Lazy<TOut>> continuation)
+        {
+            return Create<TOut>(
+                observer => source.Subscribe(
+                    result =>
+                    {
+                        TOut newValue;
+                        try
+                        {
+                            newValue = continuation(result).Value;
+                        }
+                        catch (Exception ex)
+                        {
+                            observer.OnError(ex);
+                            return;
+                        }
+
+                        observer.OnDone(newValue);
+                    },
+                    observer.OnError));
         }
     }
 }
