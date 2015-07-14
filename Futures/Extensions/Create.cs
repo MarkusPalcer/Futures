@@ -1,4 +1,6 @@
-﻿namespace Futures
+﻿using System.Reactive.Concurrency;
+
+namespace Futures
 {
     using System;
     using System.Reactive;
@@ -55,6 +57,17 @@
         public static IFuture<T> Never<T>()
         {
             return Create<T>(observer => Disposable.Empty);
+        }
+
+        /// <summary>
+        /// Creates a future which finishes with no result after a specific delay
+        /// </summary>
+        /// <param name="delay">The delay to wait</param>
+        /// <param name="scheduler">Optional; The sheduler to wait on.</param>
+        /// <returns>A future which finishes with no result after a specific delay</returns>
+        public static IFuture<Unit> Delay(TimeSpan delay, IScheduler scheduler = null)
+        {
+            return Create<Unit>(o => (scheduler ?? Scheduler.Default).Schedule(delay, () => o.OnDone(Unit.Default)));
         }
 
         /// <summary>
@@ -115,6 +128,8 @@
                 return Disposable.Empty;
             });
         }
+
+        
 
         /// <summary>
         /// Subscribes to the specified <see cref="IFuture{T}"/>

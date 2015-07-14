@@ -1,4 +1,6 @@
-﻿namespace FutureTests
+﻿using Microsoft.Reactive.Testing;
+
+namespace FutureTests
 {
     using System;
     using System.Collections.Generic;
@@ -104,6 +106,31 @@
             observer.OnError(ex);
 
             recorder.Events.Should().Equal(Futures.Notification<int>.OnError(ex));
+        }
+
+        [TestMethod]
+        public void Delay()
+        {
+            var sched = new TestScheduler();
+            var sut = Future.Delay(TimeSpan.FromTicks(100), sched);
+
+            var tester = new TestObserver<Unit>();
+
+            sut.Subscribe(tester);
+
+            Assert.AreEqual(0, tester.Events.Count);
+
+            sched.AdvanceBy(100);
+
+            Assert.AreEqual(1, tester.Events.Count);
+
+            sut.Subscribe(tester);
+
+            Assert.AreEqual(1, tester.Events.Count);
+
+            sched.AdvanceBy(100);
+
+            Assert.AreEqual(2, tester.Events.Count);
         }
 
         [TestMethod]
