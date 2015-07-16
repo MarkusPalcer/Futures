@@ -298,24 +298,30 @@
             recorder.Events.Should().BeEmpty();
             future.Observers.Should().HaveCount(0);
             scheduler.AdvanceBy(TimeSpan.FromMilliseconds(1).Ticks);
+            recorder.Events.Should().BeEmpty();
             future.Observers.Should().HaveCount(0);
             scheduler.AdvanceBy(TimeSpan.FromMilliseconds(1).Ticks);
+            recorder.Events.Should().BeEmpty();
             future.Observers.Should().HaveCount(1);
 
             future.SetError(new InvalidOperationException());
             recorder.Events.Should().BeEmpty();
             future.Observers.Should().HaveCount(0);
             scheduler.AdvanceBy(TimeSpan.FromMilliseconds(1).Ticks);
+            recorder.Events.Should().BeEmpty();
             future.Observers.Should().HaveCount(0);
             scheduler.AdvanceBy(TimeSpan.FromMilliseconds(1).Ticks);
+            recorder.Events.Should().BeEmpty();
             future.Observers.Should().HaveCount(1);
 
             future.SetError(new InvalidOperationException());
             recorder.Events.Should().BeEmpty();
             future.Observers.Should().HaveCount(0);
             scheduler.AdvanceBy(TimeSpan.FromMilliseconds(1).Ticks);
+            recorder.Events.Should().BeEmpty();
             future.Observers.Should().HaveCount(0);
             scheduler.AdvanceBy(TimeSpan.FromMilliseconds(1).Ticks);
+            recorder.Events.Should().BeEmpty();
             future.Observers.Should().HaveCount(1);
 
             future.SetError(new InvalidOperationException());

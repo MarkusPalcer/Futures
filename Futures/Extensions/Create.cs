@@ -67,7 +67,10 @@ namespace Futures
         /// <returns>A future which finishes with no result after a specific delay</returns>
         public static IFuture<Unit> Delay(TimeSpan delay, IScheduler scheduler = null)
         {
-            return Create<Unit>(o => (scheduler ?? Scheduler.Default).Schedule(delay, () => o.OnDone(Unit.Default)));
+            return Create<Unit>(o => 
+                (scheduler ?? Scheduler.Default)
+                .Schedule(delay, 
+                () => o.OnDone(Unit.Default)));
         }
 
         /// <summary>
