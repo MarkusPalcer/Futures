@@ -22,7 +22,7 @@
     publish_nuget: true
     publish_nuget_symbols: true
   
-  before-build:
+  before_build:
     - cmd: nuget restore
   
   deploy:
@@ -58,7 +58,7 @@
     publish_nuget: false
     publish_nuget_symbols: false
   
-  before-build:
+  before_build:
     - cmd: nuget restore
     
   nuget:
