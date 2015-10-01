@@ -5,6 +5,26 @@
       
   configuration: release
   
+  version: 1.0.{build}
+  
+  cache:
+    - packages -> **\packages.config
+  
+  assembly_info:
+    patch: true
+    file: AssemblyInfo.*
+    assembly_version: "1.0.{build}"
+    assembly_file_version: "1.0.{build}"
+    assembly_informational_version: "{version}"
+  
+  build:
+    verbosity: normal
+    publish_nuget: true
+    publish_nuget_symbols: true
+  
+  before-build:
+    - cmd: nuget restore
+  
   deploy:
     - provider: NuGet
       api_key:
@@ -12,19 +32,36 @@
       on:
         APPVEYOR_REPO_TAG_NAME: ReleaseToNuGet
         APPVEYOR_REPO_TAG: true
-        
-  
+
+nuget:
+  account_feed: true
+  project_feed: true
+  disable_publish_on_pr: true
+
 -
   configuration: debug
+
+  version: 1.0.{build}-{branch}
   
-version: 1.0.{build}
-pull_requests:
-  do_not_increment_build_number: true
+  cache:
+    - packages -> **\packages.config
+  
+  assembly_info:
+    patch: true
+    file: AssemblyInfo.*
+    assembly_version: "1.0.{build}"
+    assembly_file_version: "1.0.{build}"
+    assembly_informational_version: "{version}"
+
+  build:
+    verbosity: normal
+    publish_nuget: false
+    publish_nuget_symbols: false
+  
+  before-build:
+    - cmd: nuget restore
+    
 nuget:
+  account_feed: true
+  project_feed: true
   disable_publish_on_pr: true
-before_build:
-- cmd: nuget restore
-build:
-  parallel: true
-  verbosity: normal
-deploy:
