@@ -69,6 +69,7 @@
     <Compile Include="Extensions\TaskConversions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Futures.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

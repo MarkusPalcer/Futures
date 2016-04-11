@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+    <metadata>
+        <id>Futures.Testing</id>
+        <version>$version$</version>
+        <title>Futures.Testing</title>
+        <authors>Markus Palcer</authors>
+        <owners>Markus Palcer</owners>
+        <projectUrl>https://github.com/MarkusPalcer/Futures</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Classes for testing Future based applications</description>
+        <releaseNotes></releaseNotes>
+        <copyright>Copyright 2016 Markus Palcer</copyright>
+        <tags>Reactive Future</tags>
+        <dependencies>
+            <dependency id="Futures" version="$version$" />
+        </dependencies>
+    </metadata>
+</package>

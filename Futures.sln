@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Futures", "Futures\Futures.csproj", "{02BEAA1C-FCD7-4170-9819-979F2824FCA7}"
 EndProject
@@ -28,6 +28,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tutorial", "Tutorial", "{2D
 		doc\Tutorial\README.md = doc\Tutorial\README.md
 		doc\Tutorial\Subscribing.md = doc\Tutorial\Subscribing.md
 		doc\Tutorial\Transformations.md = doc\Tutorial\Transformations.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E91CB92D-F33C-4038-B4EF-0028BBCD214E}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
 Global

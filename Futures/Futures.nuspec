@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+    <metadata>
+        <id>Futures.Main</id>
+        <version>$version$</version>
+        <title>Futures - Main Package</title>
+        <authors>Markus Palcer</authors>
+        <owners>Markus Palcer</owners>
+        <projectUrl>https://github.com/MarkusPalcer/Futures</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Monadic Futures that represent asynchronous actions which return a single result</description>
+        <releaseNotes></releaseNotes>
+        <copyright>Copyright 2016 Markus Palcer</copyright>
+        <tags>Reactive Future</tags>
+        <dependencies>
+            <dependency id="Rx-Main" version="2.2.5" />
+        </dependencies>
+    </metadata>
+</package>
