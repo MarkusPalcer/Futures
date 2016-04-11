@@ -62,11 +62,11 @@
             var recorder = new TestObserver<Unit>();
             sut.Subscribe(recorder);
 
-            recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeFalse();
+            recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(1000)).Should().BeFalse();
             recorder.Events.Should().BeEmpty();
 
             tcs.SetCanceled();
-            recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            recorder.ResetEvent.Wait(TimeSpan.FromMilliseconds(1000)).Should().BeTrue();
             recorder.Events.Should().HaveCount(1);
             recorder.Events.First().Kind.Should().Be(NotificationKind.OnError);
             recorder.Events.First().Error.Should().BeOfType<TaskCanceledException>();
