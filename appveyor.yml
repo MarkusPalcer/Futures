@@ -3,6 +3,9 @@
     only:
       - master
       
+  skip-commits:
+    message: /NO-CI/
+	  
   configuration: release
   
   version: 1.0.{build}
@@ -38,8 +41,6 @@
     project_feed: true
     disable_publish_on_pr: true
   
-  skip-commits:
-    message: /NO-CI/
 -
   configuration: debug
 
