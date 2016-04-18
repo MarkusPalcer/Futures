@@ -3,9 +3,6 @@
     only:
       - master
       
-  skip-commits:
-    message: /NO-CI/
-    
   configuration: release
   
   version: 1.0.{build}
