@@ -37,7 +37,9 @@
     account_feed: true
     project_feed: true
     disable_publish_on_pr: true
-
+  
+  skip-commits:
+    message: /NO-CI/
 -
   configuration: debug
 

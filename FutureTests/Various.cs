@@ -171,5 +171,31 @@
                     Notification.OnDone(Notification.OnDone(Unit.Default)),
                     Notification.OnDone(Notification.OnError<Unit>(ex)));
         }
+
+        [TestMethod]
+        public void Dematerializing()
+        {
+          var source = new TestFuture<Futures.Notification<Unit>>();
+          var sut = source.Dematerialize();
+          var ex1 = new NotImplementedException();
+          var ex2 = new NotImplementedException();
+
+          var recorder = new TestObserver<Unit>();
+
+          sut.Subscribe(recorder);
+          source.SetResult(Notification.OnDone(Unit.Default));
+
+          sut.Subscribe(recorder);
+          source.SetResult(Notification.OnError<Unit>(ex1));
+
+          sut.Subscribe(recorder);
+          source.SetError(ex2);
+
+          recorder.Events.Should()
+              .Equal(
+                  Notification.OnDone(Unit.Default),
+                  Notification.OnError<Unit>(ex1),
+                  Notification.OnError<Unit>(ex2));
+        }
     }
 }
