@@ -56,6 +56,7 @@
     <Compile Include="Extensions\ObservableConversion.cs" />
     <Compile Include="Extensions\Create.cs" />
     <Compile Include="Extensions\Scheduling.cs" />
+    <Compile Include="Extensions\SemaphoreSlimExtensions.cs" />
     <Compile Include="Extensions\Various.cs" />
     <Compile Include="FactoryExtensions\Continuation.cs" />
     <Compile Include="FactoryExtensions\Wrapping.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="Impl\CreatedObserver.cs" />
     <Compile Include="Impl\Notification.cs" />
     <Compile Include="Impl\NotificationKind.cs" />
+    <Compile Include="Promise.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\TaskConversions.cs" />
   </ItemGroup>
