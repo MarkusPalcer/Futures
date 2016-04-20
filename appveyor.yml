@@ -41,7 +41,7 @@
       secure: dOvy2QUll8cJl/l9KYowuhPu4wdBnF7CVA/F7WuDkit2453x5WO8Q4SDyO8nifL4
 
   after_test:
-    - cmd: packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -filter:"+[*]*" -target:"C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\MSTest.exe" -targetargs:"/testcontainer:FutureTests/bin/debug/FutureTests.dll" -output:coverage.xml
+    - cmd: packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -filter:"+[*]Futures.*" -target:"C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\MSTest.exe" -targetargs:"/testcontainer:FutureTests/bin/debug/FutureTests.dll" -output:coverage.xml
     - cmd: packages\coveralls.io.1.3.4\tools\coveralls.net.exe --opencover coverage.xml
   
 -
@@ -78,5 +78,5 @@
       secure: dOvy2QUll8cJl/l9KYowuhPu4wdBnF7CVA/F7WuDkit2453x5WO8Q4SDyO8nifL4
 
   after_test:
-    - cmd: packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -filter:"+[*]*" -target:"C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\MSTest.exe" -targetargs:"/testcontainer:FutureTests/bin/debug/FutureTests.dll" -output:coverage.xml
+    - cmd: packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -filter:"+[*]Futures.*" -target:"C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\MSTest.exe" -targetargs:"/testcontainer:FutureTests/bin/debug/FutureTests.dll" -output:coverage.xml
     - cmd: packages\coveralls.io.1.3.4\tools\coveralls.net.exe --opencover coverage.xml
