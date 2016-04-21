@@ -183,3 +183,4 @@ UpgradeLog*.htm
 FakesAssemblies/
 .localhistory/
 /Futures.sln.GhostDoc.xml
+/coverage.xml

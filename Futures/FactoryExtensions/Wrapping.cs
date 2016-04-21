@@ -25,7 +25,7 @@
             this Func<T1, IFuture<TIn>> factory,
             Func<IFuture<TIn>, IFuture<TOut>> wrapper)
         {
-            return (a) =>
+            return a =>
             {
                 try
                 {

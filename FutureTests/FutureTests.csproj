@@ -75,6 +75,18 @@
   <ItemGroup>
     <Compile Include="Continuation.cs" />
     <Compile Include="ExceptionHandling.cs" />
+    <Compile Include="FactoryFunctions\GeneratedFactoryContinuationTests.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GeneratedFactoryContinuationTests.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FactoryFunctions\FactoryContinuationTests.cs" />
+    <Compile Include="FactoryFunctions\FactoryWrappingTests.cs" />
+    <Compile Include="FactoryFunctions\GeneratedFactoryWrappingTests.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GeneratedFactoryWrappingTests.tt</DependentUpon>
+    </Compile>
     <Compile Include="Generators.cs" />
     <Compile Include="ObservableConversion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -95,7 +107,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="FactoryFunctions\GeneratedFactoryContinuationTests.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GeneratedFactoryContinuationTests.cs</LastGenOutput>
+    </None>
+    <None Include="FactoryFunctions\GeneratedFactoryWrappingTests.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GeneratedFactoryWrappingTests.cs</LastGenOutput>
+    </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
