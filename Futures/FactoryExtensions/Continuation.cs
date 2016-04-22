@@ -1,9 +1,11 @@
-﻿namespace Futures
-{
-    using System;
+﻿
+using System;
 
+namespace Futures
+{
     public static partial class Future
     {
+
         public static Func<IFuture<TOut>> Then<TIn, TOut>(this Func<IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
             return () =>
@@ -19,113 +21,102 @@
             };
         }
 
-        public static Func<TArg1, IFuture<TOut>> Then<TArg1, TIn, TOut>(this Func<TArg1, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
+
+        public static Func<T1, IFuture<TOut>> Then<T1, TIn, TOut>(this Func<T1, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return arg1 => ((Func<IFuture<TIn>>)(() => factory(arg1))).Then(continuation)();
+            return (factoryArgument1) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, IFuture<TOut>> Then<TArg1, TArg2, TIn, TOut>(
-            this Func<TArg1, TArg2, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2, IFuture<TOut>> Then<T1,T2, TIn, TOut>(this Func<T1,T2, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2) => ((Func<TArg1, IFuture<TIn>>)((a) => factory(a, arg2))).Then(continuation)(arg1);
+            return (factoryArgument1,factoryArgument2) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, TArg3, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2,T3, IFuture<TOut>> Then<T1,T2,T3, TIn, TOut>(this Func<T1,T2,T3, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3) => ((Func<TArg1, TArg2, IFuture<TIn>>)((a, b) => factory(a, b, arg3))).Then(continuation)(arg1, arg2);
+            return (factoryArgument1,factoryArgument2,factoryArgument3) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, TArg3, TArg4, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TArg4, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, TArg4, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2,T3,T4, IFuture<TOut>> Then<T1,T2,T3,T4, TIn, TOut>(this Func<T1,T2,T3,T4, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3, arg4) => ((Func<TArg1, TArg2, TArg3, IFuture<TIn>>)((a, b, c) => factory(a, b, c, arg4))).Then(continuation)(arg1, arg2, arg3);
+            return (factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, TArg3, TArg4, TArg5, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TArg4, TArg5, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, TArg4, TArg5, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2,T3,T4,T5, IFuture<TOut>> Then<T1,T2,T3,T4,T5, TIn, TOut>(this Func<T1,T2,T3,T4,T5, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3, arg4, arg5) => ((Func<TArg1, TArg2, TArg3, TArg4, IFuture<TIn>>)((a, b, c, d) => factory(a, b, c, d, arg5))).Then(continuation)(arg1, arg2, arg3, arg4);
+            return (factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2,T3,T4,T5,T6, IFuture<TOut>> Then<T1,T2,T3,T4,T5,T6, TIn, TOut>(this Func<T1,T2,T3,T4,T5,T6, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3, arg4, arg5, arg6) => ((Func<TArg1, TArg2, TArg3, TArg4, TArg5, IFuture<TIn>>)((a, b, c, d, e) => factory(a, b, c, d, e, arg6))).Then(continuation)(arg1, arg2, arg3, arg4, arg5);
+            return (factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2,T3,T4,T5,T6,T7, IFuture<TOut>> Then<T1,T2,T3,T4,T5,T6,T7, TIn, TOut>(this Func<T1,T2,T3,T4,T5,T6,T7, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3, arg4, arg5, arg6, arg7) => ((Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, IFuture<TIn>>)((a, b, c, d, e, f) => factory(a, b, c, d, e, f, arg7))).Then(continuation)(arg1, arg2, arg3, arg4, arg5, arg6);
+            return (factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2,T3,T4,T5,T6,T7,T8, IFuture<TOut>> Then<T1,T2,T3,T4,T5,T6,T7,T8, TIn, TOut>(this Func<T1,T2,T3,T4,T5,T6,T7,T8, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) => ((Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, IFuture<TIn>>)((a, b, c, d, e, f, g) => factory(a, b, c, d, e, f, g, arg8))).Then(continuation)(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+            return (factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2,T3,T4,T5,T6,T7,T8,T9, IFuture<TOut>> Then<T1,T2,T3,T4,T5,T6,T7,T8,T9, TIn, TOut>(this Func<T1,T2,T3,T4,T5,T6,T7,T8,T9, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) => ((Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, IFuture<TIn>>)((a, b, c, d, e, f, g, h) => factory(a, b, c, d, e, f, g, h, arg9))).Then(continuation)(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+            return (factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10, IFuture<TOut>> Then<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10, TIn, TOut>(this Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) => ((Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, IFuture<TIn>>)((a, b, c, d, e, f, g, h, i) => factory(a, b, c, d, e, f, g, h, i, arg10))).Then(continuation)(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+            return (factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11, IFuture<TOut>> Then<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11, TIn, TOut>(this Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11) => ((Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, IFuture<TIn>>)((a, b, c, d, e, f, g, h, i, j) => factory(a, b, c, d, e, f, g, h, i, j, arg11))).Then(continuation)(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
+            return (factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10,factoryArgument11) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10,factoryArgument11))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12, IFuture<TOut>> Then<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12, TIn, TOut>(this Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12) => ((Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, IFuture<TIn>>)((a, b, c, d, e, f, g, h, i, j, k) => factory(a, b, c, d, e, f, g, h, i, j, k, arg12))).Then(continuation)(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
+            return (factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10,factoryArgument11,factoryArgument12) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10,factoryArgument11,factoryArgument12))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13, IFuture<TOut>> Then<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13, TIn, TOut>(this Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13) => ((Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, IFuture<TIn>>)((a, b, c, d, e, f, g, h, i, j, k, l) => factory(a, b, c, d, e, f, g, h, i, j, k, l, arg13))).Then(continuation)(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+            return (factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10,factoryArgument11,factoryArgument12,factoryArgument13) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10,factoryArgument11,factoryArgument12,factoryArgument13))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, TArg14, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, TArg14, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, TArg14, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14, IFuture<TOut>> Then<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14, TIn, TOut>(this Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) => ((Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, IFuture<TIn>>)((a, b, c, d, e, f, g, h, i, j, k, l, m) => factory(a, b, c, d, e, f, g, h, i, j, k, l, m, arg14))).Then(continuation)(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);
+            return (factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10,factoryArgument11,factoryArgument12,factoryArgument13,factoryArgument14) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10,factoryArgument11,factoryArgument12,factoryArgument13,factoryArgument14))).Then(continuation)();
         }
 
-        public static Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, TArg14, TArg15, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, TArg14, TArg15, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, TArg14, TArg15, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+        public static Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15, IFuture<TOut>> Then<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15, TIn, TOut>(this Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15) => ((Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, TArg14, IFuture<TIn>>)((a, b, c, d, e, f, g, h, i, j, k, l, m, n) => factory(a, b, c, d, e, f, g, h, i, j, k, l, m, n, arg15))).Then(continuation)(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+            return (factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10,factoryArgument11,factoryArgument12,factoryArgument13,factoryArgument14,factoryArgument15) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10,factoryArgument11,factoryArgument12,factoryArgument13,factoryArgument14,factoryArgument15))).Then(continuation)();
         }
-        public static Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, TArg14, TArg15, TArg16, IFuture<TOut>> Then<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, TArg14, TArg15, TArg16, TIn, TOut>(
-            this Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, TArg14, TArg15, TArg16, IFuture<TIn>> factory,
-            Func<TIn, TOut> continuation)
+
+
+        public static Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16, IFuture<TOut>> Then<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16, TIn, TOut>(this Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16, IFuture<TIn>> factory, Func<TIn, TOut> continuation)
         {
-            return (arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16) => ((Func<TArg1, TArg2, TArg3, TArg4, TArg5, TArg6, TArg7, TArg8, TArg9, TArg10, TArg11, TArg12, TArg13, TArg14, TArg15, IFuture<TIn>>)((a, b, c, d, e, f, g, h, i, j, k, l, m, n, o) => factory(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, arg16))).Then(continuation)(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
+            return (factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10,factoryArgument11,factoryArgument12,factoryArgument13,factoryArgument14,factoryArgument15,factoryArgument16) => ((Func<IFuture<TIn>>)(() => factory(factoryArgument1,factoryArgument2,factoryArgument3,factoryArgument4,factoryArgument5,factoryArgument6,factoryArgument7,factoryArgument8,factoryArgument9,factoryArgument10,factoryArgument11,factoryArgument12,factoryArgument13,factoryArgument14,factoryArgument15,factoryArgument16))).Then(continuation)();
         }
+
+
     }
 }

@@ -57,7 +57,11 @@
     <Compile Include="Extensions\Create.cs" />
     <Compile Include="Extensions\Scheduling.cs" />
     <Compile Include="Extensions\Various.cs" />
-    <Compile Include="FactoryExtensions\Continuation.cs" />
+    <Compile Include="FactoryExtensions\Continuation.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Continuation.tt</DependentUpon>
+    </Compile>
     <Compile Include="FactoryExtensions\Wrapping.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -73,6 +77,10 @@
     <Compile Include="Extensions\TaskConversions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="FactoryExtensions\Continuation.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Continuation.cs</LastGenOutput>
+    </None>
     <None Include="FactoryExtensions\Wrapping.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Wrapping.cs</LastGenOutput>
