@@ -57,8 +57,16 @@
     <Compile Include="Extensions\Create.cs" />
     <Compile Include="Extensions\Scheduling.cs" />
     <Compile Include="Extensions\Various.cs" />
-    <Compile Include="FactoryExtensions\Continuation.cs" />
-    <Compile Include="FactoryExtensions\Wrapping.cs" />
+    <Compile Include="FactoryExtensions\Continuation.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Continuation.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FactoryExtensions\Wrapping.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Wrapping.tt</DependentUpon>
+    </Compile>
     <Compile Include="IFuture.cs" />
     <Compile Include="IFutureObserver.cs" />
     <Compile Include="Impl\CreatedFuture.cs" />
@@ -69,8 +77,19 @@
     <Compile Include="Extensions\TaskConversions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="FactoryExtensions\Continuation.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Continuation.cs</LastGenOutput>
+    </None>
+    <None Include="FactoryExtensions\Wrapping.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Wrapping.cs</LastGenOutput>
+    </None>
     <None Include="Futures.nuspec" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

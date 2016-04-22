@@ -1,0 +1,90 @@
+﻿<#@ template debug="true" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+
+using System;
+using System.Globalization;
+using FluentAssertions;
+using Futures;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace FutureTests.FactoryFunctions
+{
+    [TestClass]
+    public class GeneratedFactoryContinuationTests
+    {
+<#
+foreach (var parameterCount in Enumerable.Range(1,16))
+{
+
+var parameterEnumerable = Enumerable.Range(1, parameterCount);
+var argumentStorage = string.Join(" ",parameterEnumerable.Select(x => string.Format("var actualArgument{0}Value = -1;", x)));
+var factoryArgumentList = string.Join(",", parameterEnumerable.Select(x => string.Format("factoryArgument{0}", x)));
+var typeParameterList = string.Join(",", Enumerable.Repeat("int", parameterCount));
+var argumentStorageAssignment = string.Join(" ", parameterEnumerable.Select(x => string.Format("actualArgument{0}Value = factoryArgument{0};", x)));
+var usedArguments = string.Join(",", parameterEnumerable.Select(x => string.Format("{0}", x)));
+var argumentAssertions = string.Join(" ", parameterEnumerable.Select(x => string.Format("actualArgument{0}Value.Should().Be({0});", x)));
+
+#>
+        [TestMethod]
+        public void ContinuingFactoryWith<#= parameterCount #>ParametersWithThrowingContinuation()
+        {
+          var result = new Random().Next();
+          var ex = new NotImplementedException();
+          <#= argumentStorage #>
+
+          // Setup
+          Func<<#= typeParameterList #>, IFuture<int>> factory = (<#= factoryArgumentList #>) =>
+          {
+            <#= argumentStorageAssignment #>
+            
+            return Future.Return(result);
+          };
+          var newFactory = factory.Then(x => {
+            throw ex;
+
+            // ReSharper disable once CSharpWarnings::CS0162
+            return x.ToString(CultureInfo.InvariantCulture);
+          });
+
+          // Act
+          var newFuture = newFactory(<#= usedArguments #>);
+          var observer = new TestObserver<string>();
+          newFuture.Subscribe(observer);
+
+          // Assert
+          observer.Events.Should().Equal(Notification.OnError<string>(ex));
+          <#= argumentAssertions #>
+        }
+
+        [TestMethod]
+        public void ContinuingFactoryWith<#= parameterCount #>Parameters()
+        {
+          var result = new Random().Next();
+          <#= argumentStorage #>
+
+          // Setup
+          Func<<#= typeParameterList #>, IFuture<int>> factory = (<#= factoryArgumentList #>) =>
+          {
+            <#= argumentStorageAssignment #>
+
+            return Future.Return(result);
+          };
+          var newFactory = factory.Then(x => x.ToString(CultureInfo.InvariantCulture));
+
+          // Act
+          var newFuture = newFactory(<#= usedArguments #>);
+          var observer = new TestObserver<string>();
+          newFuture.Subscribe(observer);
+
+          // Assert
+          observer.Events.Should().Equal(new[] { Notification<string>.OnDone(result.ToString(CultureInfo.InvariantCulture)) });
+          <#= argumentAssertions #>
+        }
+
+<# } #>
+    }
+}
